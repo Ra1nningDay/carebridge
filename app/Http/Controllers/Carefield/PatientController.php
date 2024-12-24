@@ -17,7 +17,7 @@ class PatientController extends Controller
             $query->where('roles.id', 4); // role_id = 4 (patient)
         })->get();
 
-        return view('carefield.patient_list', compact('users'));
+        return view('carefield.patient.patient_list', compact('users'));
     }
 
     public function store(Request $request)

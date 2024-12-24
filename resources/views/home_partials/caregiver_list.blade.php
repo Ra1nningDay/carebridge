@@ -1,4 +1,4 @@
-<section style="background-color: #f4f4f4; padding: 100px 0; margin-bottom: 72px; position: relative; overflow: hidden;">
+{{-- <section style="background-color: #f4f4f4; padding: 100px 0; margin-bottom: 72px; position: relative; overflow: hidden;">
     <div class="container">
         <!-- Background Shape -->
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(70, 112, 97, 0.15), rgba(0, 0, 0, 0.02)); z-index: 1; pointer-events: none;"></div>
@@ -130,4 +130,4 @@
             font-size: 0.8rem;
         }
     }
-</style>
+</style> --}}

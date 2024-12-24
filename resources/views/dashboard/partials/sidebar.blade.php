@@ -93,7 +93,7 @@
                 <div class="collapse {{ request()->routeIs('survey.index') ? 'show' : '' }}" id="assessmentsCollapse">
                     <ul class="list-unstyled ps-4">
                         <li class="mb-2">
-                            <a class="nav-link text-dark text-decoration-none" href="{{ route('survey.index') }}">
+                            <a class="nav-link {{ request()->routeIs('survey.index') ? 'text-primary fw-bold' : 'text-dark' }}" href="{{ route('survey.index') }}">
                                 View Assessments
                             </a>
                         </li>

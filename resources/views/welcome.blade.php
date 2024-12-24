@@ -15,7 +15,7 @@
         @include('home_partials.about_us')
         
         {{-- Caregiver Section--}}
-        @include('home_partials.caregiver_list')
+        {{-- @include('home_partials.caregiver_list') --}}
 
         <!-- Latest Stories Section -->
         @include('home_partials.lastest_stories')

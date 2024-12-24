@@ -6,12 +6,7 @@
 <div class="container-fluid my-3 mx-2">
 
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('carefield.index') }}" class="text-decoration-none text-primary">หน้าหลัก</a></li>
-            <li class="breadcrumb-item active" aria-current="page">ภาพรวมข้อมูลการลงพื้นที่</li>
-        </ol>
-    </nav>
+    @include('carefield.partials.breadcrumb')
 
     <h1 class="mb-4">ข้อมูลสุรป</h1>
 

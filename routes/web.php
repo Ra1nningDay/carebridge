@@ -14,7 +14,7 @@ Route::post('/visits', [VisitController::class, 'store'])->name('visit.store'); 
 require __DIR__.'/auth.php';
 require __DIR__.'/profile.php';
 require __DIR__.'/posts.php';
-require __DIR__.'/caregiver.php';
+// require __DIR__.'/caregiver.php';
 require __DIR__.'/dashboard.php';
 require __DIR__.'/chatbot.php';
 require __DIR__.'/carefield.php';

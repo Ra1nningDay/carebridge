@@ -9,7 +9,7 @@
             <p class="mb-4 text-muted fs-5">
                 เชื่อมต่อกับผู้ดูแลที่คุณวางใจได้ในพื้นที่ของคุณ ให้เราช่วยคุณดูแลคนที่คุณรักอย่างดีที่สุด
             </p>
-            <a href="{{route('caregiver')}}" class="btn btn-lg btn-primary btn-find-caregiver">ค้นหาผู้ดูแลทันที</a>
+            {{-- <a href="{{route('caregiver')}}" class="btn btn-lg btn-primary btn-find-caregiver">ค้นหาผู้ดูแลทันที</a> --}}
         </div>
     </div>
 </section>

@@ -29,14 +29,14 @@
                 <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('welcome') }}">สำรวจ</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('caregiver') }}">ค้นหาผู้ดูแล</a>
+                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link text-black px-3 py-0 " href="{{ route('survey.list') }}">ประเมินสุขภาพ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('posts.index') }}">บทความ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-black px-3 py-0 " href="{{ route('survey.list') }}">ประเมินสุขภาพ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('contact') }}">ติดต่อเรา</a>
@@ -45,9 +45,10 @@
 
             <!-- เมนูผู้ใช้ -->
             <div class="d-flex justify-content-center align-items-center">
-                @auth
-                <a href="{{ route('posts.create') }}" class="btn btn-outline-success me-3">สร้างโพสต์</a>
-
+            @auth
+                @if(auth()->check() && auth()->user()->roles->pluck('name')->contains('admin'))
+                    <a href="{{ route('posts.create') }}" class="btn btn-outline-success me-3">สร้างโพสต์</a>
+                @endif
                 <div class="dropdown position-relative me-3 notification-dropdown">
                     <button class="btn btn-light rounded-circle border-0 position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="32" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
@@ -111,11 +112,11 @@
                                 <i class="bi bi-pencil-square me-2 text-menu-icon"></i> แก้ไขโปรไฟล์
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="{{ route('caregiver.register') }}">
                                 <i class="bi bi-person-plus-fill me-2 text-menu-icon"></i> สมัครเป็นผู้ดูแล
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="{{ route('evaluations.form') }}">
                                 <i class="bi bi-star-fill me-2 text-menu-icon"></i> ให้คะแนนเว็บไซต์ของเรา
@@ -133,12 +134,12 @@
                 </div>
 
 
-                @else
+            @else
                 <div class="d-flex">
                     <a href="{{ route('register') }}" class="btn ms-2 d-none d-md-block">สมัครสมาชิก</a>
                     <a href="{{ route('login') }}" class="btn btn-login rounded-5 ms-2" style="background-color: #003e29">เข้าสู่ระบบ</a>
                 </div>
-                @endauth
+            @endauth
             </div>
         </div>
     </div>
