@@ -27,12 +27,12 @@
 <body class="d-flex flex-column min-vh-100 bg-light font-sans antialiased">
    <div class="d-flex">
         <!-- Sidebar -->
-        @include('carefield/partials.sidebar')
+        @include('carefield.partials.sidebar')
 
         <!-- Content Area -->
         <div class="flex-grow-1">
             <!-- Navbar -->
-            @include('layouts.nav_carefield')
+            @include('carefield.partials.navbar')
 
             <!-- Main Content -->
             <main class="container-fluid p-4">
