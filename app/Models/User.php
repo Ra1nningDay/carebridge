@@ -12,6 +12,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'citizen_id',
         'email',
         'password',
         'avatar', // เพิ่ม avatar ใน fillable

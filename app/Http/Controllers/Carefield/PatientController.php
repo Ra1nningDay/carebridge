@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\UserPersonalInfo;
+use App\Models\UserPhysical;
 
 class PatientController extends Controller
 {
@@ -24,7 +25,7 @@ class PatientController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'citizen_id' => 'required|string|size:13|unique:users,citizen_id',  // ตรวจสอบ citizen_id ที่ยาว 13 หลักและไม่ซ้ำ
             'password' => 'required|string|min:8',
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:male,female,other',
@@ -33,6 +34,9 @@ class PatientController extends Controller
             'medical_history' => 'nullable|string',
             'allergies' => 'nullable|string',
             'medications' => 'nullable|string',
+            'weight' => 'nullable|double',
+            'height' => 'nullable|double',
+            'blood_type' => 'nullable|string',
         ]);
 
         try {
@@ -40,36 +44,34 @@ class PatientController extends Controller
                 // สร้างบัญชีผู้ใช้งาน
                 $user = User::create([
                     'name' => $validated['name'],
-                    'email' => $validated['email'],
+                    'citizen_id' => $validated['citizen_id'],  // ใช้ citizen_id แทน email
                     'password' => Hash::make($validated['password']),
                 ]);
 
-                // บันทึกข้อมูลส่วนตัว
+                // บันทึกข้อมูลผู้ใช้งานส่วนบุคคล (เช่น วันเกิด, เพศ, ประวัติการแพทย์ ฯลฯ)
                 UserPersonalInfo::create([
                     'user_id' => $user->id,
                     'date_of_birth' => $validated['date_of_birth'],
                     'gender' => $validated['gender'],
-                    'phone' => $validated['phone'],
-                    'address' => $validated['address'],
-                    'medical_history' => $validated['medical_history'],
-                    'allergies' => $validated['allergies'],
-                    'medications' => $validated['medications'],
+                    'phone' => $validated['phone'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'medical_history' => $validated['medical_history'] ?? null,
+                    'allergies' => $validated['allergies'] ?? null,
+                    'medications' => $validated['medications'] ?? null,
                 ]);
 
-                // เพิ่มบทบาท
-                $roleId = DB::table('roles')->where('name', 'patient')->value('id');
-                DB::table('role_user')->insert([
+                // บันทึกข้อมูลทางกายภาพ (เช่น )
+                UserPhysical::create([
                     'user_id' => $user->id,
-                    'role_id' => $roleId,
+                    'weight' => $validated['weight'] ?? null,
+                    'gender' => $validated['gender'] ?? null,
+                    'blood_type' => $validated['blood_type'] ?? null,
                 ]);
             });
 
-            return redirect()->back()->with('success', 'ลงทะเบียนผู้ป่วยและสร้างบัญชีสำเร็จ!');
+            return redirect()->route('patients.index')->with('success', 'Patient created successfully.');
         } catch (\Exception $e) {
-            Log::error('Error during patient registration: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
+            return back()->with('error', 'Something went wrong. Please try again.');
         }
     }
-
-
 }

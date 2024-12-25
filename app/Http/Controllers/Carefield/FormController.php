@@ -9,6 +9,6 @@ class FormController extends Controller
 {
     Public function index ()
     {
-        return view('carefield.form');
+        return view('carefield.form.form');
     }
 }
