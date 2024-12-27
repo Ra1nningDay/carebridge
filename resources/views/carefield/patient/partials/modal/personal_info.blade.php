@@ -43,6 +43,14 @@
                                     <th class="bg-light">ที่อยู่:</th>
                                     <td>{{ $user->personalInfo->address ?? 'N/A' }}</td>
                                 </tr>
+                                <tr>
+                                    <th class="bg-light">ส่วนสูง</th>
+                                    <td>{{ $user->physicalInfo->first()->height ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">น้ำหนัก</th>
+                                    <td>{{ $user->physicalInfo->first()->weight ?? 'N/A' }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

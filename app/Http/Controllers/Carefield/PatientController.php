@@ -9,69 +9,97 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\UserPersonalInfo;
 use App\Models\UserPhysical;
+use Illuminate\Http\RedirectResponse; // เพิ่มการใช้ RedirectResponse ที่นี่
 
 class PatientController extends Controller
 {
     public function index()
     {
-        $users = User::with(['personalInfo', 'healthChecks'])->whereHas('roles', function ($query) {
+        $users = User::with(['personalInfo', 'physicalInfo', 'healthChecks'])->whereHas('roles', function ($query) {
             $query->where('roles.id', 4); // role_id = 4 (patient)
         })->get();
 
         return view('carefield.patient.patient_list', compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'citizen_id' => 'required|string|size:13|unique:users,citizen_id',  // ตรวจสอบ citizen_id ที่ยาว 13 หลักและไม่ซ้ำ
-            'password' => 'required|string|min:8',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required|in:male,female,other',
-            'phone' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:255',
-            'medical_history' => 'nullable|string',
-            'allergies' => 'nullable|string',
-            'medications' => 'nullable|string',
-            'weight' => 'nullable|double',
-            'height' => 'nullable|double',
-            'blood_type' => 'nullable|string',
+        // การตรวจสอบข้อมูลที่ได้รับจากฟอร์ม
+        $request->validate([
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'citizen_id' => ['required', 'string', 'size:13', 'unique:users,citizen_id'],
+            'password' => ['required', 'string', 'min:8'],
+            'date_of_birth' => ['required', 'date'],
+            'gender' => ['required', 'in:male,female,other'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'medical_history' => ['nullable', 'string'],
+            'allergies' => ['nullable', 'string'],
+            'medications' => ['nullable', 'string'],
+            'weight' => ['nullable', 'numeric'],
+            'height' => ['nullable', 'numeric'],
+            'blood_type' => ['nullable', 'string'],
+            // Additional caregiver-related validation
+            'caregiver_citizen_id' => ['required', 'string', 'size:13'],
+            'password' => ['required', 'string', 'min:8'],
+            'caregiver_date_of_birth' => ['required', 'date'],
+            'caregiver_fname' => ['required', 'string', 'max:255'],
+            'caregiver_lname' => ['required', 'string', 'max:255'],
+            'caregiver_phone' => ['required', 'string', 'max:255'],
+            'caregiver_address' => ['required', 'string', 'max:255'],
         ]);
 
         try {
-            DB::transaction(function () use ($validated) {
-                // สร้างบัญชีผู้ใช้งาน
-                $user = User::create([
-                    'name' => $validated['name'],
-                    'citizen_id' => $validated['citizen_id'],  // ใช้ citizen_id แทน email
-                    'password' => Hash::make($validated['password']),
-                ]);
+            // สร้างผู้ใช้งานใหม่ในตาราง users
+            $user = User::create([
+                'name' => $request->first_name . ' ' . $request->last_name,
+                'citizen_id' => $request->citizen_id,
+                'password' => Hash::make($request->password),
+            ]);
 
-                // บันทึกข้อมูลผู้ใช้งานส่วนบุคคล (เช่น วันเกิด, เพศ, ประวัติการแพทย์ ฯลฯ)
-                UserPersonalInfo::create([
-                    'user_id' => $user->id,
-                    'date_of_birth' => $validated['date_of_birth'],
-                    'gender' => $validated['gender'],
-                    'phone' => $validated['phone'] ?? null,
-                    'address' => $validated['address'] ?? null,
-                    'medical_history' => $validated['medical_history'] ?? null,
-                    'allergies' => $validated['allergies'] ?? null,
-                    'medications' => $validated['medications'] ?? null,
-                ]);
+            // สร้างข้อมูลส่วนตัวของผู้ป่วย
+            $personalInfo = UserPersonalInfo::create([
+                'user_id' => $user->id,
+                'firstname' => $request->first_name,
+                'lastname' => $request->first_name,
+                'date_of_birth' => $request->date_of_birth,
+                'gender' => $request->gender,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'medical_history' => $request->medical_history,
+                'allergies' => $request->allergies,
+                'medications' => $request->medications,
+            ]);
 
-                // บันทึกข้อมูลทางกายภาพ (เช่น )
-                UserPhysical::create([
-                    'user_id' => $user->id,
-                    'weight' => $validated['weight'] ?? null,
-                    'gender' => $validated['gender'] ?? null,
-                    'blood_type' => $validated['blood_type'] ?? null,
-                ]);
-            });
+            // สร้างข้อมูลทางร่างกายของผู้ป่วย
+            $physicalInfo = UserPhysical::create([
+                'user_id' => $user->id,
+                'weight' => $request->weight,
+                'height' => $request->height,
+                'blood_type' => $request->blood_type,
+            ]);
 
-            return redirect()->route('patients.index')->with('success', 'Patient created successfully.');
+            // สร้างข้อมูลผู้ดูแล
+            $caregiver = User::create([
+                'name' => $request->caregiver_fname . ' ' . $request->caregiver_lname,
+                'citizen_id' => $request->caregiver_citizen_id,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // เพิ่มบทบาท 'patient' ให้กับผู้ใช้
+            $role = DB::table('roles')->where('name', 'patient')->first();
+            if ($role) {
+                $user->roles()->attach($role->id); 
+            }
+
+            // หากการลงทะเบียนสำเร็จ, เปลี่ยนเส้นทางไปยังหน้ารายชื่อผู้ป่วยพร้อมข้อความสำเร็จ
+            return redirect()->back()->with('success', 'ลงทะเบียนผู้รับการตรวจสำเร็จ');
         } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong. Please try again.');
+            // หากเกิดข้อผิดพลาดในการลงทะเบียน, บันทึกข้อผิดพลาดและแสดงข้อความข้อผิดพลาด
+            \Log::error('Error creating patient: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'เกิดข้อผิดพลาดในการลงทะเบียน');
         }
     }
+
 }
