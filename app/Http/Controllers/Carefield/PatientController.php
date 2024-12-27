@@ -15,7 +15,7 @@ class PatientController extends Controller
 {
     public function index()
     {
-        $users = User::with(['personalInfo', 'physicalInfo', 'healthChecks'])->whereHas('roles', function ($query) {
+        $users = User::with(['personalInfo', 'physicalInfo', 'healthChecks', 'caregiver'])->whereHas('roles', function ($query) {
             $query->where('roles.id', 4); // role_id = 4 (patient)
         })->get();
 
@@ -24,7 +24,6 @@ class PatientController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        // การตรวจสอบข้อมูลที่ได้รับจากฟอร์ม
         $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
@@ -40,9 +39,9 @@ class PatientController extends Controller
             'weight' => ['nullable', 'numeric'],
             'height' => ['nullable', 'numeric'],
             'blood_type' => ['nullable', 'string'],
-            // Additional caregiver-related validation
-            'caregiver_citizen_id' => ['required', 'string', 'size:13'],
-            'password' => ['required', 'string', 'min:8'],
+            // Caregiver Validation
+            'caregiver_citizen_id' => ['required', 'string', 'size:13', 'unique:users,citizen_id'],
+            'caregiver_password' => ['required', 'string', 'min:8'],
             'caregiver_date_of_birth' => ['required', 'date'],
             'caregiver_fname' => ['required', 'string', 'max:255'],
             'caregiver_lname' => ['required', 'string', 'max:255'],
@@ -51,18 +50,18 @@ class PatientController extends Controller
         ]);
 
         try {
-            // สร้างผู้ใช้งานใหม่ในตาราง users
-            $user = User::create([
+            // สร้างผู้ใช้งานสำหรับ "ผู้สูงอายุ"
+            $elder = User::create([
                 'name' => $request->first_name . ' ' . $request->last_name,
                 'citizen_id' => $request->citizen_id,
                 'password' => Hash::make($request->password),
             ]);
 
-            // สร้างข้อมูลส่วนตัวของผู้ป่วย
-            $personalInfo = UserPersonalInfo::create([
-                'user_id' => $user->id,
+            // เพิ่มข้อมูลรายละเอียด "ผู้สูงอายุ"
+            UserPersonalInfo::create([
+                'user_id' => $elder->id,
                 'firstname' => $request->first_name,
-                'lastname' => $request->first_name,
+                'lastname' => $request->last_name,
                 'date_of_birth' => $request->date_of_birth,
                 'gender' => $request->gender,
                 'phone' => $request->phone,
@@ -72,32 +71,55 @@ class PatientController extends Controller
                 'medications' => $request->medications,
             ]);
 
-            // สร้างข้อมูลทางร่างกายของผู้ป่วย
-            $physicalInfo = UserPhysical::create([
-                'user_id' => $user->id,
+            UserPhysical::create([
+                'user_id' => $elder->id,
                 'weight' => $request->weight,
                 'height' => $request->height,
                 'blood_type' => $request->blood_type,
             ]);
 
-            // สร้างข้อมูลผู้ดูแล
+            // กำหนดบทบาทสำหรับ "ผู้สูงอายุ"
+            $elderRole = DB::table('roles')->where('name', 'patient')->first();
+            if ($elderRole) {
+                $elder->roles()->attach($elderRole->id);
+            }
+
+            // สร้างผู้ใช้งานสำหรับ "ผู้ดูแล"
             $caregiver = User::create([
                 'name' => $request->caregiver_fname . ' ' . $request->caregiver_lname,
                 'citizen_id' => $request->caregiver_citizen_id,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($request->caregiver_password),
             ]);
 
-            // เพิ่มบทบาท 'patient' ให้กับผู้ใช้
-            $role = DB::table('roles')->where('name', 'patient')->first();
-            if ($role) {
-                $user->roles()->attach($role->id); 
+            // เพิ่มข้อมูลรายละเอียด "ผู้ดูแล"
+            UserPersonalInfo::create([
+                'user_id' => $caregiver->id,
+                'firstname' => $request->caregiver_fname,
+                'lastname' => $request->caregiver_lname,
+                'date_of_birth' => $request->caregiver_date_of_birth,
+                'phone' => $request->caregiver_phone,
+                'address' => $request->caregiver_address,
+            ]);
+
+            UserPhysical::create([
+                'user_id' => $caregiver->id,
+                'weight' => $request->weight ?? null,  // ถ้าไม่มีก็ให้เป็น null
+                'height' => $request->height ?? null,
+                'blood_type' => $request->blood_type ?? null,
+            ]);
+
+
+            // กำหนดบทบาทสำหรับ "ผู้ดูแล"
+            $caregiverRole = DB::table('roles')->where('name', 'caregiver')->first();
+            if ($caregiverRole) {
+                $caregiver->roles()->attach($caregiverRole->id);
             }
 
-            // หากการลงทะเบียนสำเร็จ, เปลี่ยนเส้นทางไปยังหน้ารายชื่อผู้ป่วยพร้อมข้อความสำเร็จ
+            $elder->caregivers()->attach($caregiver->id, ['created_at' => now(), 'updated_at' => now()]);
+
             return redirect()->back()->with('success', 'ลงทะเบียนผู้รับการตรวจสำเร็จ');
         } catch (\Exception $e) {
-            // หากเกิดข้อผิดพลาดในการลงทะเบียน, บันทึกข้อผิดพลาดและแสดงข้อความข้อผิดพลาด
-            \Log::error('Error creating patient: ' . $e->getMessage());
+            \Log::error('Error creating user: ' . $e->getMessage());
             return redirect()->back()->with('error', 'เกิดข้อผิดพลาดในการลงทะเบียน');
         }
     }

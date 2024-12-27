@@ -67,7 +67,12 @@ class User extends Authenticatable
     
     public function caregiver()
     {
-        return $this->hasOne(Caregiver::class);
+        return $this->belongsToMany(User::class, 'elderly_caregiver', 'elderly_id', 'caregiver_id');
+    }
+
+    public function elderly()
+    {
+        return $this->belongsToMany(User::class, 'elderly_caregiver', 'caregiver_id', 'elderly_id');
     }
 
     public function healthChecks()

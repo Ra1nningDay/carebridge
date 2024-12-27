@@ -26,7 +26,7 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <!-- Left Column: ข้อมูลผู้รับการตรวจ -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 pe-md-4" style="border-right: 1px solid #dee2e6;">
                             <h6 class="text-secondary">ข้อมูลผู้รับการตรวจ</h6>
                             <!-- Citizen ID -->
                             <div class="mb-3">
@@ -72,7 +72,7 @@
                                         <label for="date_of_birth" class="form-label">
                                             <i class="bi bi-calendar-date"></i> วัน/เดือน/ปีเกิด
                                         </label>
-                                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required onchange="generateCredentials(); convertToBuddhistEra();">
+                                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required onchange="generatePassword('elder'); convertToBuddhistEra();">
                                     </div>
                                 </div>
                             </div>
@@ -162,7 +162,7 @@
                         </div>
 
                         <!-- Right Column: ข้อมูลผู้ดูแล -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 ps-md-4">
                             <h6 class="text-secondary">ข้อมูลผู้ดูแล</h6>
 
                             <!-- Caregiver Citizen ID -->
@@ -199,7 +199,7 @@
                                     <!-- First Name -->
                                     <div class="col-md-6">
                                         <label for="password" class="form-label">
-                                            <i class="bi bi-lock"></i> รหัสผ่าน
+                                            <i class="bi bi-lock"></i> รหัสผ่านของผู้ดูแล
                                         </label>
                                         <input type="text" class="form-control" id="caregiver_password" name="caregiver_password" placeholder="รหัสผ่านจะถูกสร้างอัตโนมัติเมื่อกรอกวันเกิด" readonly>
                                     </div>
@@ -209,7 +209,7 @@
                                         <label for="date_of_birth" class="form-label">
                                             <i class="bi bi-calendar-date"></i> วัน/เดือน/ปีเกิด
                                         </label>
-                                        <input type="date" class="form-control" id="caregiver_date_of_birth" name="caregiver_date_of_birth" required onchange="generateCredentials(); convertToBuddhistEra();">
+                                        <input type="date" class="form-control" id="caregiver_date_of_birth" name="caregiver_date_of_birth" required onchange="generatePassword('caregiver'); convertToBuddhistEra();">
                                     </div>
                                 </div>
                             </div>
@@ -219,7 +219,7 @@
                                 <label for="caregiver_phone" class="form-label">
                                     <i class="bi bi-telephone"></i> เบอร์โทรศัพท์ของผู้ดูแล
                                 </label>
-                                <input type="text" class="form-control" name="caregiver_phone" id="caregiver_phone" required placeholder="กรุณากรอกเบอร์โทรศัพท์">
+                                <input type="text" class="form-control" name="caregiver_phone" id="caregiver_phone" placeholder="กรุณากรอกเบอร์โทรศัพท์">
                             </div>
 
                             <!-- Caregiver Address -->
@@ -227,7 +227,7 @@
                                 <label for="caregiver_address" class="form-label">
                                     <i class="bi bi-house-door"></i> ที่อยู่ของผู้ดูแล
                                 </label>
-                                <input type="text" class="form-control" name="caregiver_address" id="caregiver_address" required placeholder="กรุณากรอกที่อยู่">
+                                <input type="text" class="form-control" name="caregiver_address" id="caregiver_address" placeholder="กรุณากรอกที่อยู่">
                             </div>
                         </div>
                     </div>
@@ -244,27 +244,27 @@
 
 
 <script>
-    function generateCredentials(event) {
+    function generatePassword(userType) {
+        // ระบุ ID ฟอร์มตามประเภทผู้ใช้ (elder หรือ caregiver)
+        const dobFieldId = userType === 'elder' ? 'date_of_birth' : 'caregiver_date_of_birth';
+        const passwordFieldId = userType === 'elder' ? 'password' : 'caregiver_password';
+
         // รับค่าจากวันที่เกิด
-        const dob = document.getElementById('date_of_birth').value;
+        const dob = document.getElementById(dobFieldId).value;
 
         if (!dob) {
             // ถ้ายังไม่ได้กรอกวันเกิด
-            document.getElementById('password').value = '';
+            document.getElementById(passwordFieldId).value = '';
             return;
         }
 
-        // สร้างรหัสผ่านจากวัน/เดือน/ปีเกิด
-        // ใช้ฟอร์แมต YYYYMMDD เช่น 1990-01-01 -> 19900101
+        // สร้างรหัสผ่านจากวัน/เดือน/ปีเกิด (ฟอร์แมต YYYYMMDD)
         const password = `${dob.replace(/-/g, '')}`;
 
         // ใส่รหัสผ่านในช่องกรอก
-        document.getElementById('password').value = password;
-
-        // ส่งฟอร์มหลังจากที่รหัสผ่านถูกตั้งค่า
-        event.preventDefault();  // ป้องกันการส่งฟอร์มก่อน
-        event.target.submit();   // ส่งฟอร์มหลังจากตั้งค่ารหัสผ่าน
+        document.getElementById(passwordFieldId).value = password;
     }
+
 
     function validateIdCard(input) {
         // กรองเฉพาะตัวเลข
