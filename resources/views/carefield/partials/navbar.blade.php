@@ -4,7 +4,7 @@
             // Mapping ชื่อ Route กับชื่อหน้า
             $pageTitle = [
                 'carefield.index' => 'ภาพรวมข้อมูลการลงพื้นที่',
-                'carefield.patient' => 'รายชื่อผู้ป่วย',
+                'carefield.patient' => 'รายชื่อผู้รับการตรวจสุขภาพ',
                 'carefield.form' => 'แบบฟอร์มจัดการ',
             ][Route::currentRouteName()] ?? 'ไม่ระบุชื่อหน้า';
         @endphp

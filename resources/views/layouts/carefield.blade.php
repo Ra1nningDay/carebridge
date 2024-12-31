@@ -27,12 +27,12 @@
 <body class="d-flex flex-column min-vh-100 bg-light font-sans antialiased">
    <div class="d-flex">
         <!-- Sidebar -->
-        @include('carefield/partials.sidebar')
+        @include('carefield.partials.sidebar')
 
         <!-- Content Area -->
         <div class="flex-grow-1">
             <!-- Navbar -->
-            @include('layouts.nav_carefield')
+            @include('carefield.partials.navbar')
 
             <!-- Main Content -->
             <main class="container-fluid p-4">
@@ -47,5 +47,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     @vite(['resources/js/app.js'])
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastElements = document.querySelectorAll('.toast');
+            toastElements.forEach(function (toastElement) {
+                const toast = new bootstrap.Toast(toastElement);
+                toast.show();
+            });
+        });
+    </script>
 </body>
 </html>
