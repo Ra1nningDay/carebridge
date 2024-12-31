@@ -4,7 +4,18 @@
 
 @section('content')
 <div class="container-fluid my-3 mx-2">
-    <!-- Breadcrumb -->
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+        <!-- Breadcrumb -->
     @include('carefield.partials.breadcrumb')
 
     <h1 class="mb-4">แบบฟอร์ม</h1>
