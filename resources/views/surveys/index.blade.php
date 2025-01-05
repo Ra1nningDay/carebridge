@@ -30,73 +30,78 @@
         <!-- Cards Section -->
         <div class="col-lg-8 col-md-7">
             <div class="row g-4">
+                <!-- ประเมินโรคเบาหวาน -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom">
+                    <div class="card shadow-sm h-100 hover-zoom border-light">
                         <div class="card-body d-flex flex-column text-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                                <i class="bi bi-heart fs-1 text-success"></i> <!-- ใช้ไอคอนรูปหัวใจ -->
                             </div>
-                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพทั่วไป</h5>
-                            <a href="{{ route('diabetes.survey.index') }}" class="btn btn-primary mt-auto">
-                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
-                            </a>
+                            <h5 class="card-title fw-semibold text-dark">แบบประเมินโรคเบาหวาน</h5>
+                            <small class="text-muted mb-3">ตรวจสอบระดับน้ำตาลในเลือดและภาวะเสี่ยงเบาหวาน</small>
+                            <a href="{{ route('diabetes.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
                         </div>
                     </div>
                 </div>
+
+                <!-- ประเมินโรคความดันโลหิตสูง -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom">
+                    <div class="card shadow-sm h-100 hover-zoom border-light">
                         <div class="card-body d-flex flex-column text-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                                <i class="bi bi-clipboard2-pulse fs-1 text-success"></i> <!-- ใช้ไอคอนการแสดงอารมณ์ -->
                             </div>
-                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพจิต</h5>
-                            <a href="{{ route('hypertension.survey.index') }}" class="btn btn-primary mt-auto">
-                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
-                            </a>
+                            <h5 class="card-title fw-semibold text-dark">แบบประเมินโรคความดันโลหิตสูง</h5>
+                            <small class="text-muted mb-3">ตรวจสุขภาพความดันโลหิตและผลกระทบด้านจิตใจ</small>
+                            <a href="{{ route('hypertension.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
                         </div>
                     </div>
                 </div>
+
+                <!-- ประเมินโรคหัวใจและหลอดเลือด -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom">
+                    <div class="card shadow-sm h-100 hover-zoom border-light">
                         <div class="card-body d-flex flex-column text-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                                <i class="bi bi-heart-pulse fs-1 text-success"></i> <!-- ใช้ไอคอนการตรวจวัดการเต้นของหัวใจ -->
                             </div>
-                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพการทำงาน</h5>
-                            <a href="{{ route('hearing.survey.index')}}" class="btn btn-primary mt-auto">
-                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
-                            </a>
+                            <h5 class="card-title fw-semibold text-dark">แบบประเมินโรคหัวใจและหลอดเลือด</h5>
+                            <small class="text-muted mb-3">ตรวจประเมินการทำงานและผลกระทบต่อสุขภาพ</small>
+                            <a href="" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
                         </div>
                     </div>
                 </div>
+
+                <!-- ประเมินการได้ยิน -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom">
+                    <div class="card shadow-sm h-100 hover-zoom border-light">
                         <div class="card-body d-flex flex-column text-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                                <i class="bi bi-ear fs-1 text-success"></i> <!-- ใช้ไอคอนเกี่ยวกับการฟัง -->
                             </div>
-                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพการนอนหลับ</h5>
-                            <a href="{{ route('oral-health.survey.index') }}" class="btn btn-primary mt-auto">
-                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
-                            </a>
+                            <h5 class="card-title fw-semibold text-dark">แบบประเมินการได้ยิน</h5>
+                            <small class="text-muted mb-3">ตรวจสอบความสามารถในการได้ยินและความเสี่ยง</small>
+                            <a href="{{ route('hearing.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
                         </div>
                     </div>
                 </div>
+
+                <!-- ประเมินสุขภาพช่องปาก -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom">
+                    <div class="card shadow-sm h-100 hover-zoom border-light">
                         <div class="card-body d-flex flex-column text-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                                <i class="bi bi-emoji-grimace fs-1 text-success"></i> <!-- ใช้ไอคอนฟัน -->
                             </div>
-                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพด้านโภชนาการ</h5>
-                            <a href="{{ route('vision.survey.index')}}" class="btn btn-primary mt-auto">
-                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
-                            </a>
+                            <h5 class="card-title fw-semibold text-dark">แบบประเมินสุขภาพช่องปากผู้สูงอาย</h5>
+                            <small class="text-muted mb-3">ประเมินสุขภาพจากโภชนาการและอาหาร</small>
+                            <a href="{{ route('oral-health.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Aside Content -->
         <aside class="col-lg-4 col-md-5">
@@ -144,9 +149,7 @@
 </div>
 
 @include('layouts.footer')
-@endsection
 
-@section('styles')
 <style>
     .hover-zoom:hover {
         transform: scale(1.05);
@@ -162,45 +165,42 @@
         border-radius: 50%;
         margin: 0 auto;
     }
-    .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-    }
-    .btn-primary:hover {
-        background-color: #084298;
-    }
     aside .card {
         border-radius: 8px;
     }
-</style>
-@endsection
 
-
-@section('styles')
-<style>
-    .hover-zoom:hover {
-        transform: scale(1.05);
-        transition: all 0.3s ease-in-out;
-    }
-    .icon-wrapper {
-        background-color: #eef6fc;
-        width: 80px;
-        height: 80px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        margin: 0 auto;
-    }
-    .btn-primary {
-        background-color: #0d6efd;
+    .btn-success {
+        position: relative;
+        overflow: hidden;
+        background-color: #198754;
         border: none;
+        transition: background-color 0.3s ease-in-out;
+        color: #fff; /* ฟอนต์เริ่มต้นเป็นสีขาว */
+        z-index: 1; /* ฟอนต์อยู่บนสุด */
     }
-    .btn-primary:hover {
-        background-color: #084298;
+
+    .btn-success::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background-color: #145c43;
+        transition: left 0.3s ease-in-out;
+        z-index: -1; /* พื้นหลังอยู่ข้างล่างของฟอนต์ */
     }
-    aside .card {
-        border-radius: 8px;
+
+    .btn-success:hover::before {
+        left: 0;
     }
+
+    .btn-success:hover {
+        background-color: #145c43;
+        color: #fff; /* ฟอนต์สีขาวเมื่อ hover */
+    }
+
+
 </style>
 @endsection
+

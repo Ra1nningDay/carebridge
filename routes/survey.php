@@ -9,7 +9,7 @@ use App\Http\Controllers\Survey\VisionSurveyController;
 
 // Survey Management
 Route::get('/survey', function () {
-    return view('survey.index');
+    return view('surveys.index');
 })->name('survey.index');
 
 Route::prefix('survey')->group(function () {

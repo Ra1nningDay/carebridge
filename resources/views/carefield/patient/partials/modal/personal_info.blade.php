@@ -9,7 +9,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                <!-- ข้อมูลส่วนตัว -->
                 <h6 class="text-primary"><i class="fas fa-user"></i> ข้อมูลพื้นฐาน</h6>
                 <div class="accordion" id="personalInfoAccordion">
@@ -38,8 +37,30 @@
                                                     <td>{{ $user->personalInfo->date_of_birth ?? 'N/A' }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="bg-light">เพศ:</th>
-                                                    <td>{{ $user->personalInfo->gender ?? 'N/A' }}</td>
+                                                <th class="bg-light">อายุ:</th>
+                                                    <td>
+                                                        @if ($user->personalInfo && $user->personalInfo->date_of_birth)
+                                                            {{ \Carbon\Carbon::parse($user->personalInfo->date_of_birth)->age }} ปี
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                <th class="bg-light">เพศ:</th>
+                                                    <td>
+                                                        @if ($user->personalInfo && $user->personalInfo->gender)
+                                                            @if ($user->personalInfo->gender === 'male')
+                                                                ชาย
+                                                            @elseif ($user->personalInfo->gender === 'female')
+                                                                หญิง
+                                                            @else
+                                                                ไม่ระบุ
+                                                            @endif
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="bg-light">เบอร์โทร:</th>
@@ -73,12 +94,12 @@
                     <div class="accordion" id="caregiverAccordion">
                         @foreach ($user->caregiver as $index => $caregiver)
                         <div class="accordion-item">
-                            <h2 class="accordion-header" id="heading{{ $index }}">
-                                <button class="accordion-button {{ $index !== 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $index }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="collapse{{ $index }}">
+                            <h2 class="accordion-header" id="headingCaregiver{{ $index }}">
+                                <button class="accordion-button {{ $index !== 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaregiver{{ $index }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="collapseCaregiver{{ $index }}">
                                     ผู้ดูแล
                                 </button>
                             </h2>
-                            <div id="collapse{{ $index }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" aria-labelledby="heading{{ $index }}" data-bs-parent="#caregiverAccordion">
+                            <div id="collapseCaregiver{{ $index }}" class="accordion-collapse collapse" aria-labelledby="headingCaregiver{{ $index }}">
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-md-4 text-center">
@@ -97,6 +118,16 @@
                                                         <td>{{ $caregiver->personalInfo->date_of_birth ?? 'N/A' }}</td>
                                                     </tr>
                                                     <tr>
+                                                        <th class="bg-light">อายุ:</th>
+                                                        <td>
+                                                            @if ($caregiver->personalInfo && $caregiver->personalInfo->date_of_birth)
+                                                                {{ \Carbon\Carbon::parse($caregiver->personalInfo->date_of_birth)->age }} ปี
+                                                            @else
+                                                                N/A
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
                                                         <th class="bg-light">เพศ:</th>
                                                         <td>{{ $caregiver->personalInfo->gender ?? 'N/A' }}</td>
                                                     </tr>
@@ -112,7 +143,7 @@
                                                         <th class="bg-light">น้ำหนัก:</th>
                                                         <td>{{ $caregiver->physicalInfo->first()->weight ?? 'N/A' }}</td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr>    
                                                         <th class="bg-light">ส่วนสูง:</th>
                                                         <td>{{ $caregiver->physicalInfo->first()->height ?? 'N/A' }}</td>
                                                     </tr>
@@ -129,68 +160,87 @@
                     <p class="text-muted">ยังไม่มีผู้ดูแลที่เชื่อมโยง</p>
                 @endif
 
-
                 <!-- ข้อมูลการตรวจสุขภาพ -->
                 <h6 class="text-primary mt-4"><i class="fas fa-heartbeat"></i> ข้อมูลการตรวจสุขภาพ</h6>
                 @if ($user->healthChecks->count() > 0)
                     <div class="accordion" id="healthCheckAccordion">
                         @foreach ($user->healthChecks as $index => $check)
                         <div class="accordion-item">
-                            <h2 class="accordion-header" id="heading{{ $index }}">
-                                <button class="accordion-button {{ $index !== 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $index }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="collapse{{ $index }}">
+                            <h2 class="accordion-header" id="headingHealthCheck{{ $index }}">
+                                <button class="accordion-button {{ $index !== 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHealthCheck{{ $index }}" aria-expanded="true" aria-controls="collapseHealthCheck{{ $index }}">
                                     <strong>การตรวจสุขภาพครั้งที่ {{ $index + 1 }} - {{ $check->check_date }}</strong>
                                 </button>
                             </h2>
-                            <div id="collapse{{ $index }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" aria-labelledby="heading{{ $index }}" data-bs-parent="#healthCheckAccordion">
+                            <div id="collapseHealthCheck{{ $index }}" class="accordion-collapse collapse" aria-labelledby="headingHealthCheck{{ $index }}">
                                 <div class="accordion-body">
-                                    <div class="row">
+                                    <div class="accordion" id="healthDetailAccordion{{ $index }}">
                                         <!-- ความดันโลหิต -->
-                                        <div class="col-md-6">
-                                            <p><strong><i class="fas fa-heartbeat text-danger"></i> ความดันตัวบน (SBP):</strong> {{ $check->blood_pressure_sbp ?? 'N/A' }} mmHg</p>
-                                            <p><strong><i class="fas fa-heartbeat text-danger"></i> ความดันตัวล่าง (DBP):</strong> {{ $check->blood_pressure_dbp ?? 'N/A' }} mmHg</p>
-                                            @php
-                                                $pressureRisk = ($check->blood_pressure_sbp > 140 || $check->blood_pressure_dbp > 90) ? 'มีความเสี่ยง' : 'ปกติ';
-                                            @endphp
-                                            <p class="text-warning"><strong><i class="fas fa-exclamation-circle"></i> ความเสี่ยงความดันโลหิตสูง:</strong> {{ $pressureRisk }}</p>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="bpHeading{{ $index }}">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#bpCollapse{{ $index }}" aria-expanded="false" aria-controls="bpCollapse{{ $index }}">
+                                                    ความดันโลหิต
+                                                </button>
+                                            </h2>
+                                            <div id="bpCollapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="bpHeading{{ $index }}">
+                                                <div class="accordion-body">
+                                                    <p><strong>SBP:</strong> {{ $check->blood_pressure_sbp ?? 'N/A' }} mmHg</p>
+                                                    <p><strong>DBP:</strong> {{ $check->blood_pressure_dbp ?? 'N/A' }} mmHg</p>
+                                                </div>
+                                            </div>
                                         </div>
-
                                         <!-- FPG -->
-                                        <div class="col-md-6">
-                                            <p><strong><i class="fas fa-syringe text-info"></i> FPG:</strong> {{ $check->fpg ?? 'N/A' }} mg/dL</p>
-                                            @php
-                                                $diabetesRisk = ($check->fpg > 126) ? 'มีความเสี่ยง' : 'ปกติ';
-                                            @endphp
-                                            <p class="text-danger"><strong><i class="fas fa-exclamation-circle"></i> เสี่ยงโรคเบาหวาน:</strong> {{ $diabetesRisk }}</p>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="fpgHeading{{ $index }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fpgCollapse{{ $index }}" aria-expanded="false" aria-controls="fpgCollapse{{ $index }}">
+                                                    FPG
+                                                </button>
+                                            </h2>
+                                            <div id="fpgCollapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="fpgHeading{{ $index }}">
+                                                <div class="accordion-body">
+                                                    <p><strong>FPG:</strong> {{ $check->fpg ?? 'N/A' }} mg/dL</p>
+                                                </div>
+                                            </div>
                                         </div>
-
                                         <!-- การได้ยิน -->
-                                        <div class="col-md-6">
-                                            <p><strong><i class="fas fa-deaf text-info"></i> การได้ยิน หูซ้าย:</strong> {{ $check->hearing_left ?? 'N/A' }}</p>
-                                            <p><strong><i class="fas fa-deaf text-info"></i> การได้ยิน หูขวา:</strong> {{ $check->hearing_right ?? 'N/A' }}</p>
-                                            @php
-                                                $hearingRisk = ($check->hearing_left === 'ไม่ได้ยิน' || $check->hearing_right === 'ไม่ได้ยิน') ? 'มีปัญหาการได้ยิน' : 'ปกติ';
-                                            @endphp
-                                            <p class="text-warning"><strong><i class="fas fa-exclamation-circle"></i> สถานะการได้ยิน:</strong> {{ $hearingRisk }}</p>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="hearingHeading{{ $index }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hearingCollapse{{ $index }}" aria-expanded="false" aria-controls="hearingCollapse{{ $index }}">
+                                                    การได้ยิน
+                                                </button>
+                                            </h2>
+                                            <div id="hearingCollapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="hearingHeading{{ $index }}">
+                                                <div class="accordion-body">
+                                                    <p><strong>หูซ้าย:</strong> {{ $check->hearing_left ?? 'N/A' }}</p>
+                                                    <p><strong>หูขวา:</strong> {{ $check->hearing_right ?? 'N/A' }}</p>
+                                                </div>
+                                            </div>
                                         </div>
-
                                         <!-- กระดูกพรุน -->
-                                        <div class="col-md-6">
-                                            <p><strong><i class="fas fa-bone text-info"></i> อายุ:</strong> {{ $check->age ?? 'N/A' }} ปี</p>
-                                            <p><strong><i class="fas fa-bone text-info"></i> น้ำหนักตัว:</strong> {{ $check->weight ?? 'N/A' }} กิโลกรัม</p>
-                                            @php
-                                                $ostaIndex = ($check->weight && $check->age) ? 0.2 * ($check->weight - $check->age) : 'N/A';
-                                                $osteoporosisRisk = 'N/A';
-                                                if ($ostaIndex !== 'N/A') {
-                                                    $osteoporosisRisk = ($ostaIndex < -4) ? 'สูง' : (($ostaIndex >= -4 && $ostaIndex <= -1) ? 'ปานกลาง' : 'ต่ำ');
-                                                }
-                                            @endphp
-                                            <p><strong><i class="fas fa-calculator text-info"></i> คะแนน OSTA Index:</strong> {{ $ostaIndex }}</p>
-                                            <p><strong><i class="fas fa-exclamation-circle"></i> ความเสี่ยงกระดูกพรุน:</strong> {{ $osteoporosisRisk }}</p>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="boneHeading{{ $index }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#boneCollapse{{ $index }}" aria-expanded="false" aria-controls="boneCollapse{{ $index }}">
+                                                    กระดูกพรุน
+                                                </button>
+                                            </h2>
+                                            <div id="boneCollapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="boneHeading{{ $index }}">
+                                                <div class="accordion-body">
+                                                    <p><strong>อายุ:</strong> {{ $check->age ?? 'N/A' }} ปี</p>
+                                                    <p><strong>น้ำหนักตัว:</strong> {{ $check->weight ?? 'N/A' }} กิโลกรัม</p>
+                                                </div>
+                                            </div>
                                         </div>
-
                                         <!-- หมายเหตุ -->
-                                        <div class="col-12">
-                                            <p><strong><i class="fas fa-file-alt text-primary"></i> หมายเหตุ:</strong> {{ $check->blood_test_results ?? 'ไม่มีข้อมูลเพิ่มเติม' }}</p>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="noteHeading{{ $index }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#noteCollapse{{ $index }}" aria-expanded="false" aria-controls="noteCollapse{{ $index }}">
+                                                    หมายเหตุ
+                                                </button>
+                                            </h2>
+                                            <div id="noteCollapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="noteHeading{{ $index }}">
+                                                <div class="accordion-body">
+                                                    <p>{{ $check->blood_test_results ?? 'ไม่มีข้อมูลเพิ่มเติม' }}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -201,6 +251,7 @@
                 @else
                     <p class="text-muted"><i class="fas fa-info-circle"></i> ยังไม่มีข้อมูลการตรวจสุขภาพ</p>
                 @endif
+
 
                 <!-- ปุ่มเพิ่มข้อมูล -->
                 <div class="mt-3 text-end">
