@@ -30,22 +30,71 @@
         <!-- Cards Section -->
         <div class="col-lg-8 col-md-7">
             <div class="row g-4">
-                @foreach($assessments as $assessment)
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100 hover-zoom">
                         <div class="card-body d-flex flex-column text-center">
                             <div class="icon-wrapper mb-3">
                                 <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
                             </div>
-                            <h5 class="card-title fw-bold">{{ $assessment->name }}</h5>
-                            <p class="card-text text-muted small mb-4">{{ $assessment->description }}</p>
-                            <a href="{{ route('survey.show', $assessment->id) }}" class="btn btn-primary mt-auto">
+                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพทั่วไป</h5>
+                            <a href="{{ route('diabetes.survey.index') }}" class="btn btn-primary mt-auto">
                                 เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
-                @endforeach
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100 hover-zoom">
+                        <div class="card-body d-flex flex-column text-center">
+                            <div class="icon-wrapper mb-3">
+                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพจิต</h5>
+                            <a href="{{ route('hypertension.survey.index') }}" class="btn btn-primary mt-auto">
+                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100 hover-zoom">
+                        <div class="card-body d-flex flex-column text-center">
+                            <div class="icon-wrapper mb-3">
+                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพการทำงาน</h5>
+                            <a href="{{ route('hearing.survey.index')}}" class="btn btn-primary mt-auto">
+                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100 hover-zoom">
+                        <div class="card-body d-flex flex-column text-center">
+                            <div class="icon-wrapper mb-3">
+                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพการนอนหลับ</h5>
+                            <a href="{{ route('oral-health.survey.index') }}" class="btn btn-primary mt-auto">
+                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100 hover-zoom">
+                        <div class="card-body d-flex flex-column text-center">
+                            <div class="icon-wrapper mb-3">
+                                <i class="bi bi-clipboard-heart fs-1 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold">แบบประเมินสุขภาพด้านโภชนาการ</h5>
+                            <a href="{{ route('vision.survey.index')}}" class="btn btn-primary mt-auto">
+                                เริ่มแบบประเมิน <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

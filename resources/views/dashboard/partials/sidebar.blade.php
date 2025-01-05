@@ -77,7 +77,7 @@
                 </a>
             </li>
 
-            <!-- Assessments -->
+            {{-- <!-- Assessments -->
             <li class="nav-item ">
                 <a class="nav-link d-flex align-items-center {{ request()->routeIs('survey.index') ? 'active bg-primary text-white' : 'text-dark' }} p-3 w-100" 
                    data-bs-toggle="collapse" 
@@ -104,7 +104,7 @@
                         </li>
                     </ul>
                 </div>
-            </li>
+            </li> --}}
 
             {{-- <!-- Settings -->
             <li class="nav-item mb-3">

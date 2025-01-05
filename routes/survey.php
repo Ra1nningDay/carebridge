@@ -1,11 +1,30 @@
 <?php 
 use App\Http\Controllers\Survey\AssessmentController;
 use App\Http\Controllers\Dashboard\SurveyController;
+use App\Http\Controllers\Survey\DiabetesSurveyController;
+use App\Http\Controllers\Survey\HypertensionSurveyController;
+use App\Http\Controllers\Survey\HearingSurveyController;
+use App\Http\Controllers\Survey\OralHealthSurveyController;
+use App\Http\Controllers\Survey\VisionSurveyController;
 
-// Dashboard Page
-Route::get('/survey', [AssessmentController::class, 'index'])->name('survey.list');
+// Survey Management
+Route::get('/survey', function () {
+    return view('survey.index');
+})->name('survey.index');
 
-Route::get('/survey/{id}', [AssessmentController::class, 'show'])->name('survey.show');
+Route::prefix('survey')->group(function () {
+    Route::get('/diabetes', [DiabetesSurveyController::class, 'index'])->name('diabetes.survey.index');
+    Route::post('/diabetes', [DiabetesSurveyController::class, 'store'])->name('diabetes.survey.store');
 
-Route::post('/survey/{id}/submit', [SurveyController::class, 'submit'])->name('survey.submit');
+    Route::get('/hypertension', [HypertensionSurveyController::class, 'index'])->name('hypertension.survey.index');
+    Route::post('/hypertension', [HypertensionSurveyController::class, 'store'])->name('hypertension.survey.store');
 
+    Route::get('/hearing', [HearingSurveyController::class, 'index'])->name('hearing.survey.index');
+    Route::post('/hearing', [HearingSurveyController::class, 'store'])->name('hearing.survey.store');
+
+    Route::get('/oral-health', [OralHealthSurveyController::class, 'index'])->name('oral-health.survey.index');
+    Route::post('/oral-health', [OralHealthSurveyController::class, 'store'])->name('oral-health.survey.store');
+
+    Route::get('/vision', [VisionSurveyController::class, 'index'])->name('vision.survey.index');
+    Route::post('/vision', [VisionSurveyController::class, 'store'])->name('vision.survey.store');
+});

@@ -69,11 +69,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#saved" data-bs-toggle="tab">ที่บันทึกไว้</a>
                         </li>
-                        @if ($user->caregiver)
+                        {{-- @if ($user->caregiver)
                             <li class="nav-item">
                                 <a class="nav-link" href="#caregiver-info" data-bs-toggle="tab">ข้อมูลผู้ดูแล</a>
                             </li>
-                        @endif
+                        @endif --}}
                     </ul>
 
                     <!-- เนื้อหาในแท็บ -->
@@ -137,14 +137,14 @@
                         <div class="tab-pane fade" id="saved">
                             <p>เนื้อหาแท็บที่บันทึกไว้อยู่ที่นี่</p>
                         </div>
-                        @if ($user->caregiver)
+                        {{-- @if ($user->caregiver)
                             <div class="tab-pane fade" id="caregiver-info">
                                 <h5>ข้อมูลผู้ดูแล</h5>
                                 <p>ประสบการณ์: {{ $user->caregiver->experience_years }} ปี</p>
                                 <p>ความเชี่ยวชาญ: {{ $user->caregiver->specialization }}</p>
                                 <p>คะแนน: ★★★★★ ({{ $user->caregiver->rating }})</p>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                 </div>
             </div>
@@ -157,9 +157,9 @@
                     <img src="{{ $user->avatar_url }}" alt="รูปโปรไฟล์" class="rounded-circle mb-2" width="80" height="80">
                     <h5>{{ $user->name }}</h5>
                     <p class="text-muted">{{ $user->caregiver ? 'ผู้ดูแล' : 'สมาชิก' }}</p>
-                    @if ($user->caregiver)
+                    {{-- @if ($user->caregiver)
                         <p class="text-muted">คะแนน: ★★★★★ ({{ $user->caregiver->rating }})</p>
-                    @endif
+                    @endif --}}
                 </div>
                 <hr>
                 <div class="card-body">

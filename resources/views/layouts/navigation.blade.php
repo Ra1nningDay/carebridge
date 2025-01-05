@@ -33,7 +33,7 @@
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('caregiver') }}">ค้นหาผู้ดูแล</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link text-black px-3 py-0 " href="{{ route('survey.list') }}">ประเมินสุขภาพ</a>
+                    <a class="nav-link text-black px-3 py-0 " href="{{ route('survey.index') }}">ประเมินสุขภาพ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('posts.index') }}">บทความ</a>

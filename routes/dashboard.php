@@ -36,31 +36,4 @@ Route::prefix('dashboard')->middleware(['auth', 'verified', AdminOnly::class])->
 
     // Rating Management (ใหม่)
     Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
-
-    // Survey Management
-    Route::prefix('survey')->name('survey.')->group(function () {
-        // แสดงหัวข้อแบบประเมินทั้งหมด
-        Route::get('/survey', [SurveyController::class, 'index'])->name('index');
-
-        // เพิ่มหัวข้อใหม่
-        Route::post('/store', [SurveyController::class, 'store'])->name('store');
-
-        // แสดงคำถามในหัวข้อ
-        Route::get('/{id}/questions', [SurveyController::class, 'questions'])->name('questions');
-
-        // เพิ่มคำถามใหม่ในหัวข้อ
-        Route::post('/{id}/questions/store', [SurveyController::class, 'storeQuestion'])->name('questions.store');
-
-        // แก้ไขคำถาม
-        Route::get('/questions/{question}/edit', [SurveyController::class, 'editQuestion'])->name('questions.edit');
-
-        // อัปเดตคำถาม
-        Route::put('/questions/{question}', [SurveyController::class, 'updateQuestion'])->name('questions.update');
-
-        // ลบคำถาม
-        Route::delete('/questions/{question}', [SurveyController::class, 'destroyQuestion'])->name('questions.destroy');
-    });
-
-    
-
 });
