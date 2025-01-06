@@ -16,6 +16,7 @@ class HealthCheck extends Model
     protected $fillable = [
         'user_id',
         'check_date',
+        'recorded_by',
         'blood_pressure_sbp',
         'blood_pressure_dbp',
         'fpg',

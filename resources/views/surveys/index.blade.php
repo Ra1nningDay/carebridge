@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="container">
-    <div class="text-center my-4">
+    <div class="text-center my-5">
         <h1 class="fw-bold">แบบประเมินสุขภาพ</h1>
         <p class="text-muted fs-5">เลือกแบบประเมินที่เหมาะสมกับคุณ</p>
     </div>
 
     <!-- Search Bar -->
-    <form method="GET" action="{{ route('survey.index') }}" class="mb-4">
+    <form method="GET" action="{{ route('survey.index') }}" class="mb-5">
         <div class="input-group shadow-sm">
             <input 
                 type="text" 
@@ -25,85 +25,95 @@
         </div>
     </form>
 
-    <!-- Main Content with Aside -->
+    <!-- Main Content -->
     <div class="row g-4">
-        <!-- Cards Section -->
-        <div class="col-lg-8 col-md-7">
+        <!-- Physical Health Assessments -->
+        <div class="col-lg-8 col-md-7 mb-5">
+            <h2 class="fw-bold text-success">ด้านร่างกาย</h2>
             <div class="row g-4">
-                <!-- ประเมินโรคเบาหวาน -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom border-light">
-                        <div class="card-body d-flex flex-column text-center">
-                            <div class="icon-wrapper mb-3">
-                                <i class="bi bi-heart fs-1 text-success"></i> <!-- ใช้ไอคอนรูปหัวใจ -->
-                            </div>
-                            <h5 class="card-title fw-semibold text-dark">แบบประเมินโรคเบาหวาน</h5>
-                            <small class="text-muted mb-3">ตรวจสอบระดับน้ำตาลในเลือดและภาวะเสี่ยงเบาหวาน</small>
-                            <a href="{{ route('diabetes.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-heart fs-1 text-danger"></i>
+                            <h5 class="card-title mt-3">แบบประเมินโรคเบาหวาน</h5>
+                            <p class="text-muted">ตรวจสอบระดับน้ำตาลในเลือดและภาวะเสี่ยงเบาหวาน</p>
+                            <a href="{{ route('diabetes.survey.index') }}" class="btn btn-danger mt-2">
+                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- ประเมินโรคความดันโลหิตสูง -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom border-light">
-                        <div class="card-body d-flex flex-column text-center">
-                            <div class="icon-wrapper mb-3">
-                                <i class="bi bi-clipboard2-pulse fs-1 text-success"></i> <!-- ใช้ไอคอนการแสดงอารมณ์ -->
-                            </div>
-                            <h5 class="card-title fw-semibold text-dark">แบบประเมินโรคความดันโลหิตสูง</h5>
-                            <small class="text-muted mb-3">ตรวจสุขภาพความดันโลหิตและผลกระทบด้านจิตใจ</small>
-                            <a href="{{ route('hypertension.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-heart-pulse fs-1 text-primary"></i>
+                            <h5 class="card-title mt-3">แบบประเมินโรคหัวใจและหลอดเลือด</h5>
+                            <p class="text-muted">ประเมินการทำงานของหัวใจและหลอดเลือด</p>
+                            <a href="" class="btn btn-primary mt-2">
+                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- ประเมินโรคหัวใจและหลอดเลือด -->
+            <h2 class="fw-bold text-primary mt-4">ด้านจิตใจ</h2>
+            <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom border-light">
-                        <div class="card-body d-flex flex-column text-center">
-                            <div class="icon-wrapper mb-3">
-                                <i class="bi bi-heart-pulse fs-1 text-success"></i> <!-- ใช้ไอคอนการตรวจวัดการเต้นของหัวใจ -->
-                            </div>
-                            <h5 class="card-title fw-semibold text-dark">แบบประเมินโรคหัวใจและหลอดเลือด</h5>
-                            <small class="text-muted mb-3">ตรวจประเมินการทำงานและผลกระทบต่อสุขภาพ</small>
-                            <a href="" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-clipboard2-pulse fs-1 text-warning"></i>
+                            <h5 class="card-title mt-3">แบบประเมินสุขภาพจิต</h5>
+                            <p class="text-muted">ตรวจสอบความเครียดและภาวะซึมเศร้า</p>
+                            <a href="" class="btn btn-warning mt-2">
+                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- ประเมินการได้ยิน -->
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom border-light">
-                        <div class="card-body d-flex flex-column text-center">
-                            <div class="icon-wrapper mb-3">
-                                <i class="bi bi-ear fs-1 text-success"></i> <!-- ใช้ไอคอนเกี่ยวกับการฟัง -->
-                            </div>
-                            <h5 class="card-title fw-semibold text-dark">แบบประเมินการได้ยิน</h5>
-                            <small class="text-muted mb-3">ตรวจสอบความสามารถในการได้ยินและความเสี่ยง</small>
-                            <a href="{{ route('hearing.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-emoji-smile fs-1 text-success"></i>
+                            <h5 class="card-title mt-3">แบบประเมินความสุข</h5>
+                            <p class="text-muted">ตรวจวัดความพึงพอใจและความสุขในชีวิต</p>
+                            <a href="" class="btn btn-success mt-2">
+                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- ประเมินสุขภาพช่องปาก -->
+            <h2 class="fw-bold text-secondary mt-4">อื่น ๆ</h2>
+            <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-zoom border-light">
-                        <div class="card-body d-flex flex-column text-center">
-                            <div class="icon-wrapper mb-3">
-                                <i class="bi bi-emoji-grimace fs-1 text-success"></i> <!-- ใช้ไอคอนฟัน -->
-                            </div>
-                            <h5 class="card-title fw-semibold text-dark">แบบประเมินสุขภาพช่องปากผู้สูงอาย</h5>
-                            <small class="text-muted mb-3">ประเมินสุขภาพจากโภชนาการและอาหาร</small>
-                            <a href="{{ route('oral-health.survey.index') }}" class="btn btn-success mt-auto">เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i></a>
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-ear fs-1 text-secondary"></i>
+                            <h5 class="card-title mt-3">แบบประเมินการได้ยิน</h5>
+                            <p class="text-muted">ตรวจสอบการได้ยินและความเสี่ยงต่อการสูญเสียการได้ยิน</p>
+                            <a href="{{ route('hearing.survey.index') }}" class="btn btn-secondary mt-2">
+                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-emoji-grimace fs-1 text-secondary"></i>
+                            <h5 class="card-title mt-3">แบบประเมินสุขภาพช่องปาก</h5>
+                            <p class="text-muted">ตรวจสอบปัญหาสุขภาพช่องปากและฟัน</p>
+                            <a href="" class="btn btn-secondary mt-2">
+                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-        <!-- Aside Content -->
+	<!-- Aside Content -->
         <aside class="col-lg-4 col-md-5">
             <div class="" style="top: 20px;">
                 <!-- Section 1: วิธีการประเมิน -->

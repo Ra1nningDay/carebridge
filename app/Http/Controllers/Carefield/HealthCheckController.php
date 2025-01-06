@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HealthCheck;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use App\Models\UserPersonalInfo;
 
 
@@ -71,10 +72,14 @@ class HealthCheckController extends Controller
             'other_results' => 'nullable|string',
         ]);
 
+        // ผู้ตรวจเป็นอสม. (user ที่ทำการกรอกข้อมูล) สามารถใช้ Auth::user()->id หรือส่งมาเป็นค่า user_id
+        $recordedById = Auth::user()->id; // ใช้ id ของผู้ที่กรอก (อสม.)
+
         // Insert into `health_checks`
         HealthCheck::create([
             'user_id' => $validated['user_id'], // Directly map `user_id` from `users.id`
             'check_date' => $validated['check_date'],
+            'recorded_by' => $recordedById, // แทนฟิลด์นี้ด้วย user_id ของผู้ที่ทำการตรวจ
             'blood_pressure_sbp' => $validated['blood_pressure_sbp'] ?? null,
             'blood_pressure_dbp' => $validated['blood_pressure_dbp'] ?? null,
             'fpg' => $validated['fpg'] ?? null,

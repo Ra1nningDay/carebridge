@@ -12,7 +12,7 @@
                 @csrf
                 <div class="modal-body">
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-
+                    <input type="hidden" name="recorded_by" value="{{ Auth::user()->id }}">
                     <!-- ข้อมูลพื้นฐาน -->
                     <h6 class="text-secondary mt-4"><i class="fas fa-calendar-alt"></i> ข้อมูลพื้นฐาน</h6>
                     <div class="row g-3">
