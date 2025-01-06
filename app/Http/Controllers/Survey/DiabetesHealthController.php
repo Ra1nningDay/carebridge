@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Survey;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class DiabetesSurveyController extends Controller
+class DiabetesHealthController extends Controller
 {
     public function index()
     {

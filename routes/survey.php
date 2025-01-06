@@ -1,7 +1,7 @@
 <?php 
 use App\Http\Controllers\Survey\AssessmentController;
 use App\Http\Controllers\Dashboard\SurveyController;
-use App\Http\Controllers\Survey\DiabetesSurveyController;
+use App\Http\Controllers\Survey\HealthAssessmentController;
 use App\Http\Controllers\Survey\HypertensionSurveyController;
 use App\Http\Controllers\Survey\HearingSurveyController;
 use App\Http\Controllers\Survey\OralHealthSurveyController;
@@ -13,8 +13,8 @@ Route::get('/survey', function () {
 })->name('survey.index');
 
 Route::prefix('survey')->group(function () {
-    Route::get('/diabetes', [DiabetesSurveyController::class, 'index'])->name('diabetes.survey.index');
-    Route::post('/diabetes', [DiabetesSurveyController::class, 'store'])->name('diabetes.survey.store');
+    Route::get('/health_assessment', [HealthAssessmentController::class, 'create'])->name('health_assessments.create');
+    Route::post('/health_assessment', [HealthAssessmentController::class, 'store'])->name('health_assessments.store');
 
     Route::get('/hypertension', [HypertensionSurveyController::class, 'index'])->name('hypertension.survey.index');
     Route::post('/hypertension', [HypertensionSurveyController::class, 'store'])->name('hypertension.survey.store');

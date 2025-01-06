@@ -29,21 +29,21 @@
     <div class="row g-4">
         <!-- Physical Health Assessments -->
         <div class="col-lg-8 col-md-7 mb-5">
-            <h2 class="fw-bold text-success">ด้านร่างกาย</h2>
+            <h2 class="fw-bold text-success mb-3">คัดกรองโรคสำคัญและภาวะสุขภาพ</h2>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <i class="bi bi-heart fs-1 text-danger"></i>
-                            <h5 class="card-title mt-3">แบบประเมินโรคเบาหวาน</h5>
-                            <p class="text-muted">ตรวจสอบระดับน้ำตาลในเลือดและภาวะเสี่ยงเบาหวาน</p>
-                            <a href="{{ route('diabetes.survey.index') }}" class="btn btn-danger mt-2">
+                            <h5 class="card-title mt-3">ประเมินความเสี่ยงโรคทั่วไป</h5>
+                            <p class="text-muted">วิเคราะห์สุขภาพในด้านต่างๆ เช่น ระดับน้ำตาลในเลือด, ความดันโลหิต, สุขภาพช่องปาก, และสุขภาพทางตา พร้อมรับคำแนะนำดูแลสุขภาพ</p>
+                            <a href="{{ route('health_assessment.index') }}" class="btn btn-danger mt-2">
                                 เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <i class="bi bi-heart-pulse fs-1 text-primary"></i>
@@ -54,10 +54,10 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
-            <h2 class="fw-bold text-primary mt-4">ด้านจิตใจ</h2>
+            <h2 class="fw-bold text-primary mt-4 mb-3">การคัดกรองกลุ่ม Geriatric Syndromes</h2>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <i class="bi bi-emoji-smile fs-1 text-success"></i>
@@ -82,10 +82,10 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
-            <h2 class="fw-bold text-secondary mt-4">อื่น ๆ</h2>
+            <h2 class="fw-bold text-secondary mt-4 mb-3">การประเมินความสามารถในการทำกิจวัตรประจำวัน (Activities of Daily Living)</h2>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
@@ -99,7 +99,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <i class="bi bi-emoji-grimace fs-1 text-secondary"></i>
@@ -110,7 +110,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
 	<!-- Aside Content -->

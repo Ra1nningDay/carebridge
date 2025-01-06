@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Survey;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class VisionSurveyController extends Controller
+class EyeHeathController extends Controller
 {
     //
 }

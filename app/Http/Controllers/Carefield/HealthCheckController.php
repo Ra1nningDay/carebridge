@@ -39,10 +39,6 @@ class HealthCheckController extends Controller
         return view('profile.healthcheck', compact('user', 'healthChecks'));
     }
 
-
-
-
-
     /**
      * แสดงฟอร์มบันทึกข้อมูลการตรวจสุขภาพใหม่.
      */
