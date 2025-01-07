@@ -52,6 +52,18 @@ class DashboardController extends Controller
         ));
     }
 
+    // public function map() {
+    //     return view('dashboard.risks.map'); // เพิ่มเนื้อหาแผนที่ใน view นี้
+    // }
+
+    // public function kpis() {
+    //     return view('dashboard.risks.kpis'); // เน้นการแสดงตัวบ่งชี้ความเสี่ยง
+    // }
+
+    // public function alerts() {
+    //     return view('dashboard.risks.alerts'); // แสดงแจ้งเตือนความเสี่ยง
+    // }
+
 }
 
 

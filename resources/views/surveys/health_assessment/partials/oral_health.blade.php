@@ -1,7 +1,9 @@
 <div class="question-block mb-4">
-    <h5 class="fw-semibold text-primary">สุขภาพช่องปาก</h5>
-    <p class="text-muted mb-4">กรุณากรอกข้อมูลการดูแลสุขภาพช่องปากของคุณ</p>
-
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-semibold text-primary">สุขภาพช่องปาก</h5>
+        <p class="text-muted mb-0">กรุณากรอกข้อมูลการดูแลสุขภาพช่องปาก</p>
+    </div>
     
     <div class="card border p-3 rounded-lg shadow-sm">
        <!-- ความถี่ในการแปรงฟัน -->

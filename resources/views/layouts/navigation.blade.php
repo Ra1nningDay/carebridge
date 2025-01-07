@@ -100,8 +100,31 @@
 
                 <!-- User Profile Dropdown -->
                 <div class="dropdown">
-                    <button class="btn bg-light rounded-circle p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img class="rounded-circle" src="{{ auth()->user()->avatar_url }}" width="40" height="40" alt="Profile Picture">
+                    <button class="btn bg-light d-flex align-items-center p-2 rounded-pill shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- Profile Picture -->
+                        <img class="rounded-circle me-2" src="{{ auth()->user()->avatar_url }}" width="40" height="40" alt="Profile Picture">
+
+                        <!-- User Info -->
+                        <div class="d-flex flex-column text-start">
+                            <p class="mb-0 fw-semibold text-truncate" style="max-width: 150px;">{{ auth()->user()->name }}</p>
+                            <small class="text-muted">
+                                @if(auth()->user()->roles->isNotEmpty())
+                                    @php
+                                        // Map ชื่อ Role กับชื่อที่ต้องการแสดง
+                                        $roleMapping = [
+                                            'caregiver' => 'ผู้ดูแล',
+                                            'admin' => 'เจ้าหน้าที่',
+                                            'patient' => 'ผู้สูงอายุ',
+                                        ];
+                                    @endphp
+
+                                    {{-- แสดง Role โดยแปลงชื่อผ่าน $roleMapping --}}
+                                    {{ auth()->user()->roles->pluck('name')->map(fn($role) => $roleMapping[$role] ?? $role)->join(', ') }}
+                                @else
+                                    ไม่ได้กำหนดบทบาท
+                                @endif
+                            </small>
+                        </div>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end p-3 shadow rounded-3" style="width: 250px;">
                         <!-- ส่วนข้อมูลโปรไฟล์ -->
@@ -109,7 +132,23 @@
                             <img class="rounded-circle border border-secondary" 
                                 src="{{ auth()->user()->avatar_url }}" width="80" height="80" alt="Profile Picture">
                             <h6 class="mt-2 mb-0">{{ auth()->user()->name ?? 'ไม่ระบุชื่อ' }}</h6>
-                            <small class="text-muted">{{ auth()->user()->email ?? 'ไม่ระบุ' }}</small>
+                            <small class="text-muted">
+                                @if(auth()->user()->roles->isNotEmpty())
+                                    @php
+                                        // Map ชื่อ Role กับชื่อที่ต้องการแสดง
+                                        $roleMapping = [
+                                            'caregiver' => 'ผู้ดูแล',
+                                            'admin' => 'เจ้าหน้าที่',
+                                            'patient' => 'ผู้สูงอายุ',
+                                        ];
+                                    @endphp
+
+                                    {{-- แสดง Role โดยแปลงชื่อผ่าน $roleMapping --}}
+                                    {{ auth()->user()->roles->pluck('name')->map(fn($role) => $roleMapping[$role] ?? $role)->join(', ') }}
+                                @else
+                                    ไม่ได้กำหนดบทบาท
+                                @endif
+                            </small>
                         </div>
                         <hr class="my-2">
                         {{-- <!-- แสดงข้อมูลผู้ดูแลหากผู้ใช้มีบทบาทเป็นผู้สูงอายุ -->
@@ -152,6 +191,11 @@
                             </a>
                         </li>
                         <li>
+                            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('appointments.index') }}">
+                                <i class="bi bi-calendar me-2"></i> การนัดหมาย
+                            </a>
+                        </li>
+                        <li>
                             <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('evaluations.form') }}">
                                 <i class="bi bi-star-fill me-2"></i> ให้คะแนนเว็บไซต์ของเรา
                             </a>
@@ -175,7 +219,7 @@
             @else
                 <div class="d-flex">
                     <a href="{{ route('register') }}" class="btn ms-2 d-none d-md-block">สมัครสมาชิก</a>
-                    <a href="{{ route('login') }}" class="btn btn-login rounded-5 ms-2" style="background-color: #003e29">เข้าสู่ระบบ</a>
+                    <a href="{{ route('login') }}" class="btn btn-login rounded-5 ms-2">เข้าสู่ระบบ</a>
                 </div>
             @endauth
             </div>
@@ -226,7 +270,13 @@
     }
 
     .btn-login {
-        color: #f1f1f1
+        color: #f1f1f1;
+        background-color: #003e29;
+    }
+
+    .btn-login:hover {
+        color: #f1f1f1;
+        background-color: #467061;
     }
 
     /* รูปโปรไฟล์ในรายการสนทนา */

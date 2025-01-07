@@ -1,6 +1,9 @@
 <div class="question-block mb-4">
-    <h5 class="fw-semibold text-primary mb-3">สุขภาพตา</h5>
-    <p class="text-muted mb-4">กรุณาตอบคำถามตามประสบการณ์ของคุณเกี่ยวกับสุขภาพตาของผู้รับการตรวจ</p>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-semibold text-primary mb-3">สุขภาพตา</h5>
+        <p class="text-muted mb-0">กรุณาตอบเกี่ยวกับสุขภาพตาของผู้รับการตรวจ</p>
+    </div>
     
     <div class="card border p-3 rounded-lg shadow-sm">
         <p class="font-weight-bold">โปรดเลือกข้อที่ตรงกับผู้รับการตรวจ:</p>

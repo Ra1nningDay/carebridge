@@ -30,11 +30,11 @@ class CaregiverController extends Controller
         return view('dashboard.caregiver-management', compact('caregivers'));
     }
 
-    public function showDashboardCaregiverManagement()
-    {
-        $caregivers = Caregiver::paginate(10); // Fetch caregivers with pagination
-        return view('dashboard.caregiver-management', compact('caregivers'));
-    }
+    // public function showDashboardCaregiverManagement()
+    // {
+    //     $caregivers = Caregiver::paginate(10); // Fetch caregivers with pagination
+    //     return view('dashboard.caregiver-management', compact('caregivers'));
+    // }
 
 
 

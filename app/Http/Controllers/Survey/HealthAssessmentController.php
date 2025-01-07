@@ -10,9 +10,37 @@ use App\Models\DiabetesHealth;
 use App\Models\OralHealth;
 use App\Models\EyeHealth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class HealthAssessmentController extends Controller
 {
+    public function dashboard()
+    {
+        // ดึงข้อมูลจำนวนผู้สูงอายุที่มีความเสี่ยง
+        $hypertensionRiskCount = HealthAssessment::whereHas('hypertensionHealth', function ($query) {
+            $query->where('hypertension_status', 'treated')->orWhere('hypertension_status', 'untreated');
+        })->count();
+
+        $diabetesRiskCount = HealthAssessment::whereHas('diabetesHealth', function ($query) {
+            $query->where('diabetes_status', 'treated')->orWhere('diabetes_status', 'untreated');
+        })->count();
+
+        $oralHealthRiskCount = HealthAssessment::whereHas('oralHealth', function ($query) {
+            $query->where('brushing_frequency', 'not sufficient');
+        })->count();
+
+        $eyeHealthRiskCount = HealthAssessment::whereHas('eyeHealth', function ($query) {
+            $query->where('has_eye_issue', true);
+        })->count();
+
+        return view('dashboard.risks.bgs.summary', compact(
+            'hypertensionRiskCount',
+            'diabetesRiskCount',
+            'oralHealthRiskCount',
+            'eyeHealthRiskCount'
+        ));
+    }
+
     // หน้าแสดงฟอร์มสำหรับกรอกแบบประเมิน
     public function create()
     {
@@ -25,89 +53,127 @@ class HealthAssessmentController extends Controller
     // ฟังก์ชั่นสำหรับการบันทึกผลการกรอกแบบประเมิน
     public function store(Request $request)
     {
-        // การตรวจสอบข้อมูลที่ได้รับ
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id', // ID ผู้ใช้
-            'recorded_by' => 'required|exists:users,id', // ID ของผู้บันทึก
+        try {
+            // การตรวจสอบข้อมูลที่ได้รับ
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id', // ID ผู้ใช้
+                'recorded_by' => 'required|exists:users,id', // ID ของผู้บันทึก
 
-            // ข้อมูลที่เกี่ยวข้องกับ HypertensionHealth
-            'hypertension_status' => 'required|string',
-            'sbp' => 'nullable|integer',
-            'dbp' => 'nullable|integer',
+                // ข้อมูลที่เกี่ยวข้องกับ HypertensionHealth
+                'sbp' => 'nullable|integer',
+                'dbp' => 'nullable|integer',
 
-            // ข้อมูลที่เกี่ยวข้องกับ DiabetesHealth
-            'diabetes_status' => 'required|string',
-            'fpg' => 'nullable|numeric',
-            'random_glucose' => 'nullable|numeric',
+                // ข้อมูลที่เกี่ยวข้องกับ DiabetesHealth
+                'fpg' => 'nullable|numeric',
+                'random_glucose' => 'nullable|numeric',
 
-            // ข้อมูลที่เกี่ยวข้องกับ OralHealth
-            'brushing_frequency' => 'nullable|string',
-            'brushing_other' => 'nullable|string',
-            'uses_toothpaste' => 'nullable|boolean',
-            'cleans_between_teeth' => 'nullable|boolean',
-            'cleaning_tool' => 'nullable|string',
-            'smokes_more_than_10' => 'nullable|boolean',
-            'chews_areca' => 'nullable|boolean',
+                // ข้อมูลที่เกี่ยวข้องกับ OralHealth
+                'brushing_frequency' => 'nullable|string',
+                'brushing_other' => 'nullable|string',
+                'uses_toothpaste' => 'nullable|boolean',
+                'cleans_between_teeth' => 'nullable|boolean',
+                'cleaning_tool' => 'nullable|string',
+                'smokes_more_than_10' => 'nullable|boolean',
+                'chews_areca' => 'nullable|boolean',
 
-            // ข้อมูลที่เกี่ยวข้องกับ EyeHealth
-            'has_eye_issue' => 'nullable|boolean',
-            'distance_vision_issue' => 'nullable|boolean',
-            'near_vision_issue' => 'nullable|boolean',
-            'cataract_risk_left' => 'nullable|boolean',
-            'cataract_risk_right' => 'nullable|boolean',
-            'glaucoma_risk_left' => 'nullable|boolean',
-            'glaucoma_risk_right' => 'nullable|boolean',
-            'macular_degeneration_left' => 'nullable|boolean',
-            'macular_degeneration_right' => 'nullable|boolean',
-        ]);
+                // ข้อมูลที่เกี่ยวข้องกับ EyeHealth
+                'has_eye_issue' => 'nullable|boolean',
+                'distance_vision_issue' => 'nullable|boolean',
+                'near_vision_issue' => 'nullable|boolean',
+                'cataract_risk_left' => 'nullable|boolean',
+                'cataract_risk_right' => 'nullable|boolean',
+                'glaucoma_risk_left' => 'nullable|boolean',
+                'glaucoma_risk_right' => 'nullable|boolean',
+                'macular_degeneration_left' => 'nullable|boolean',
+                'macular_degeneration_right' => 'nullable|boolean',
+            ]);
 
-        // บันทึกข้อมูลในตาราง HealthAssessment
-        $healthAssessment = HealthAssessment::create([
-            'user_id' => $request->user_id,
-            'recorded_by' => Auth::id(),
-        ]);
+            // Calculate hypertension status based on SBP and DBP values
+            $hypertensionStatus = 'undiagnosed'; // Default status
 
-        // บันทึกข้อมูลในตาราง HypertensionHealth
-        $healthAssessment->hypertensionHealth()->create([
-            'status' => $request->hypertension_status,
-            'sbp' => $request->sbp,
-            'dbp' => $request->dbp,
-        ]);
+            if ($request->sbp >= 140 || $request->dbp >= 90) {
+                $hypertensionStatus = 'untreated';
+            } elseif ($request->sbp < 140 && $request->dbp < 90) {
+                if ($request->hypertension_status === 'treated') {
+                    $hypertensionStatus = 'treated';
+                }
+            }
 
-        // บันทึกข้อมูลในตาราง DiabetesHealth
-        $healthAssessment->diabetesHealth()->create([
-            'status' => $request->diabetes_status,
-            'fpg' => $request->fpg,
-            'random_glucose' => $request->random_glucose,
-        ]);
+            // Calculate diabetes status based on FPG and Random Glucose values
+            $diabetesStatus = 'normal'; // Default status
 
-        // บันทึกข้อมูลในตาราง OralHealth
-        $healthAssessment->oralHealth()->create([
-            'brushing_frequency' => $request->brushing_frequency,
-            'brushing_other' => $request->brushing_other,
-            'uses_toothpaste' => $request->uses_toothpaste,
-            'cleans_between_teeth' => $request->cleans_between_teeth,
-            'cleaning_tool' => $request->cleaning_tool,
-            'smokes_more_than_10' => $request->smokes_more_than_10,
-            'chews_areca' => $request->chews_areca,
-        ]);
+            if ($request->fpg >= 126 || $request->random_glucose >= 200) {
+                $diabetesStatus = 'diabetes';
+            } elseif (($request->fpg >= 100 && $request->fpg < 126) || ($request->random_glucose >= 140 && $request->random_glucose < 200)) {
+                $diabetesStatus = 'pre-diabetes';
+            }
 
-        // บันทึกข้อมูลในตาราง EyeHealth
-        $healthAssessment->eyeHealth()->create([
-            'has_eye_issue' => $request->has_eye_issue,
-            'distance_vision_issue' => $request->distance_vision_issue,
-            'near_vision_issue' => $request->near_vision_issue,
-            'cataract_risk_left' => $request->cataract_risk_left,
-            'cataract_risk_right' => $request->cataract_risk_right,
-            'glaucoma_risk_left' => $request->glaucoma_risk_left,
-            'glaucoma_risk_right' => $request->glaucoma_risk_right,
-            'macular_degeneration_left' => $request->macular_degeneration_left,
-            'macular_degeneration_right' => $request->macular_degeneration_right,
-        ]);
+            // บันทึกข้อมูลในตาราง HealthAssessment
+            $healthAssessment = HealthAssessment::create([
+                'user_id' => $request->user_id,
+                'recorded_by' => $request->recorded_by,
+            ]);
 
-        // คืนค่าผลลัพธ์ที่บันทึกเสร็จแล้ว
-        return redirect()->route('surveys.health_assessment.index')->with('success', 'บันทึกผลการประเมินสำเร็จ');
+            // บันทึกข้อมูลในตาราง HypertensionHealth
+            $healthAssessment->hypertensionHealth()->create([
+                'status' => $hypertensionStatus, // ใช้ค่าสถานะที่คำนวณ
+                'sbp' => $request->sbp,
+                'dbp' => $request->dbp,
+            ]);
+
+            // บันทึกข้อมูลในตาราง DiabetesHealth
+            $healthAssessment->diabetesHealth()->create([
+                'status' => $diabetesStatus, // ใช้ค่าสถานะที่คำนวณ
+                'fpg' => $request->fpg,
+                'random_glucose' => $request->random_glucose,
+            ]);
+
+            // บันทึกข้อมูลในตาราง OralHealth
+            $healthAssessment->oralHealth()->create([
+                'brushing_frequency' => $request->brushing_frequency,
+                'brushing_other' => $request->brushing_other,
+                'uses_toothpaste' => $request->uses_toothpaste,
+                'cleans_between_teeth' => $request->cleans_between_teeth,
+                'cleaning_tool' => $request->cleaning_tool,
+                'smokes_more_than_10' => $request->smokes_more_than_10,
+                'chews_areca' => $request->chews_areca,
+            ]);
+
+            // บันทึกข้อมูลในตาราง EyeHealth
+            $healthAssessment->eyeHealth()->create([
+                'has_eye_issue' => $request->has_eye_issue,
+                'distance_vision_issue' => $request->distance_vision_issue,
+                'near_vision_issue' => $request->near_vision_issue,
+                'cataract_risk_left' => $request->cataract_risk_left,
+                'cataract_risk_right' => $request->cataract_risk_right,
+                'glaucoma_risk_left' => $request->glaucoma_risk_left,
+                'glaucoma_risk_right' => $request->glaucoma_risk_right,
+                'macular_degeneration_left' => $request->macular_degeneration_left,
+                'macular_degeneration_right' => $request->macular_degeneration_right,
+            ]);
+
+            // รีไดเร็กไปหน้า survey.show พร้อม user_id
+            return redirect()->route('health_assessments.show', ['healthAssessment' => $healthAssessment->id])
+                            ->with('success', 'บันทึกผลการประเมินสำเร็จ');
+        } catch (\Exception $e) {
+            Log::error('Error saving health assessment: ' . $e->getMessage(), [
+                'error' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            return back()->withErrors(['error' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()]);
+        }
     }
 
+    // SurveyController.php
+    public function show(HealthAssessment $healthAssessment)
+    {
+        try {
+            // ส่งข้อมูลไปยังหน้า view
+            return view('surveys.health_assessment.show', compact('healthAssessment')); // ส่ง healthAssessment ไปยัง view
+        } catch (\Exception $e) {
+            Log::error('Error displaying health assessment: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'เกิดข้อผิดพลาดในการแสดงผล']);
+        }
+    }
 }
 

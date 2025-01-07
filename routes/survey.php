@@ -13,8 +13,10 @@ Route::get('/survey', function () {
 })->name('survey.index');
 
 Route::prefix('survey')->group(function () {
+    
     Route::get('/health_assessment', [HealthAssessmentController::class, 'create'])->name('health_assessments.create');
     Route::post('/health_assessment', [HealthAssessmentController::class, 'store'])->name('health_assessments.store');
+    Route::get('/health_assessment/{healthAssessment}', [HealthAssessmentController::class, 'show'])->name('health_assessments.show');
 
     Route::get('/hypertension', [HypertensionSurveyController::class, 'index'])->name('hypertension.survey.index');
     Route::post('/hypertension', [HypertensionSurveyController::class, 'store'])->name('hypertension.survey.store');

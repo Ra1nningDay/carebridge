@@ -41,4 +41,10 @@ class HealthAssessment extends Model
     {
         return $this->hasOne(EyeHealth::class);
     }
+    
+    // ฟังก์ชันความสัมพันธ์ของ recorded_by
+    public function recordedBy()
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
+    }
 }

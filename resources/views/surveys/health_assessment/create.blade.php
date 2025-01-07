@@ -10,6 +10,17 @@
         </h1>
         <p class="text-muted fs-5">กรุณากรอกข้อมูลและตอบคำถามเพื่อประเมินเบื้องต้น</p>
     </div>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->has('error'))
+        <div class="alert alert-danger">
+            {{ $errors->first('error') }}
+        </div>
+    @endif
 
     <!-- ฟอร์มการกรอกข้อมูลทั้งหมด -->
     <form action="{{ route('health_assessments.store') }}" method="POST">
@@ -20,27 +31,27 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-8">
+                    {{-- แบบประเมิน  --}}
+                    <div class="col-12 col-md-8 d-flex flex-column mx-auto" style="height: 100%;">
                         <!-- Recorded By -->
                         <input type="hidden" name="recorded_by" value="{{ Auth::id() }}">
 
                         <!-- Hypertension Section -->
-                        <div id="hypertensionSection" class="hidden-section visible-section">
+                        <div id="hypertensionSection" class="hidden-section visible-section d-flex flex-column flex-grow-1">
                             @include('surveys.health_assessment.partials.hypertension')
 
-                            <div class="d-flex justify-content-end mt-4">
+                            <div class="d-flex justify-content-end mt-auto">
                                 <button type="button" id="nextToDiabetes" class="btn btn-outline-primary d-flex align-items-center">
                                     <i class="bi bi-arrow-right-circle me-2"></i> ถัดไป
                                 </button>
                             </div>
                         </div>
 
-                
                         <!-- โรคเบาหวาน Section -->
-                        <div id="diabetesSection" class="hidden-section">
+                        <div id="diabetesSection" class="hidden-section d-flex flex-column flex-grow-1">
                             @include('surveys.health_assessment.partials.diabetes')
-                            <!-- ปุ่มก่อนหน้าและถัดไป -->
-                            <div class="d-flex justify-content-between mt-4">
+
+                            <div class="d-flex justify-content-between mt-auto">
                                 <button type="button" id="prevToHypertension" class="btn btn-outline-secondary d-flex align-items-center">
                                     <i class="bi bi-arrow-left-circle me-2"></i> กลับ
                                 </button>
@@ -51,11 +62,10 @@
                         </div>
 
                         <!-- สุขภาพช่องปาก Section -->
-                        <div id="oralHealthSection" class="hidden-section">
+                        <div id="oralHealthSection" class="hidden-section d-flex flex-column flex-grow-1">
                             @include('surveys.health_assessment.partials.oral_health')
 
-                            <!-- ปุ่มก่อนหน้าและถัดไป -->
-                            <div class="d-flex justify-content-between mt-4">
+                            <div class="d-flex justify-content-between mt-auto">
                                 <button type="button" id="prevToDiabetes" class="btn btn-outline-secondary d-flex align-items-center">
                                     <i class="bi bi-arrow-left-circle me-2"></i> กลับ
                                 </button>
@@ -65,30 +75,27 @@
                             </div>
                         </div>
 
-
                         <!-- สุขภาพตา Section -->
-                        <div id="eyeHealthSection" class="hidden-section">
+                        <div id="eyeHealthSection" class="hidden-section d-flex flex-column flex-grow-1">
                             @include('surveys.health_assessment.partials.eye_health')
 
-                            <!-- ปุ่มกลับและส่งแบบประเมิน -->
-                            <div class="d-flex justify-content-between align-items-center mt-4">
-                                <!-- ปุ่มกลับ -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
                                 <button type="button" id="prevToOral" class="btn btn-outline-secondary d-flex align-items-center">
                                     <i class="bi bi-arrow-left-circle me-2"></i> กลับ
                                 </button>
-
-                                <!-- ปุ่มบันทึกข้อมูล -->
                                 <button type="submit" class="btn btn-outline-success d-flex align-items-center">
                                     <i class="bi bi-check-circle me-2"></i> ส่งแบบประเมิน
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    {{-- ผู้สูงอายุ --}}
                     <div class="col-md-4" style="padding-top: 20px;">
                         <div class="d-flex flex-column h-100">
                             <div class="form-group mb-4" >
                                 <label for="elder_id" class="form-label">ผู้สูงอายุที่ต้องการประเมิน:</label>
-                                <select name="elder_id" id="elder_id" class="form-select" required>
+                                <select name="user_id" id="user_id" class="form-select" required>
                                     <option value="" selected disabled>กรุณาเลือกผู้สูงอายุ</option>
                                     @foreach ($elders as $elder)
                                         <option value="{{ $elder->id }}" 
@@ -105,14 +112,19 @@
                                                                 @endif
                                                             @else
                                                                 N/A
-                                                            @endif">
-                                            {{ $elder->name }}
+                                                            @endif"
+                                                data-last-assessment="@if ($elder->healthAssessment && $elder->healthAssessment->isNotEmpty()) 
+                                                                        {{ $elder->healthAssessment->sortByDesc('created_at')->first()->created_at }}
+                                                                    @else
+                                                                        ยังไม่ได้ตรวจ
+                                                                    @endif">
+                                            {{ $elder->name }}  
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <!-- ที่จะแสดงรูปโปรไฟล์ -->
-                            <div id="elderProfileImage" class="mt-3 mb-4" style="display:none; text-align: center;">
+                            <div id="elderProfileImage" class="" style="display:none; text-align: center;">
                                 <img id="profileImage" src="" alt="Profile Image" class="img-fluid rounded-circle" style="max-width: 150px; height: auto;" />
                             </div>
 
@@ -121,6 +133,7 @@
                                 <p><strong>ชื่อ:</strong> <span id="elderName"></span></p>
                                 <p><strong>อายุ:</strong> <span id="elderAge"></span> ปี</p>
                                 <p><strong>เพศ:</strong> <span id="elderGender"></span></p>
+                                <p><strong>ครั้งที่ตรวจสุขภาพล่าสุด:</strong> <span id="lastAssessmentDate"></span></p>
                             </div>
 
                             <!-- Progress Bar -->
@@ -130,8 +143,8 @@
 
                             <!-- ปุ่มสำหรับแสดงคำแนะนำ -->
                             <div class="d-flex justify-content-end mt-auto">
-                                <button type="button" id="showHealthTipsBtn" class="btn btn-outline-success d-flex align-items-center">
-                                    <i class="bi bi-info-circle me-2"></i> ดูคำแนะนำในการดูแล
+                                <button type="button" id="showHealthTipsBtn" class="btn btn-outline-warning d-flex align-items-center">
+                                    <i class="bi bi-info-circle me-2"></i> คำแนะนำเบื้องต้น
                                 </button>
                             </div>
 
@@ -139,45 +152,176 @@
                             <div id="healthTipsPopup" class="popup-container">
                                 <div class="popup-content bg-light p-4 border rounded shadow-sm">
                                     <h6 class="fw-semibold text-success">
-                                        <i class="bi bi-person-check me-2"></i> คำแนะนำเบื้องต้นในการดูแลผู้สูงอายุที่มีความดันโลหิตสูง
+                                        <i class="bi bi-pencil-square me-2"></i> คำแนะนำเบื้องต้นในการทำแบบประเมินผู้สูงอายุ
                                     </h6>
 
-                                    <p>การดูแลความดันโลหิตในผู้สูงอายุถือเป็นสิ่งสำคัญในการป้องกันปัญหาสุขภาพจากโรคหัวใจ หรือโรคหลอดเลือดสมอง ข้อแนะนำหลักๆ คือ:</p>
+                                    <p>การทำแบบประเมินสำหรับผู้สูงอายุช่วยให้คุณทราบถึงความต้องการในการดูแลและปัญหาสุขภาพที่อาจเกิดขึ้น เพื่อการให้คำแนะนำและการดูแลที่เหมาะสม ข้อแนะนำเบื้องต้นในการทำแบบประเมินมีดังนี้:</p>
 
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">
-                                            <i class="bi bi-heart me-2"></i><strong>ตรวจวัดความดันโลหิตสม่ำเสมอ</strong> ทุก 1-2 สัปดาห์
+                                            <i class="bi bi-check-circle me-2"></i><strong>เก็บข้อมูลเบื้องต้นของผู้สูงอายุ</strong> เช่น ชื่อ อายุ และประวัติสุขภาพ
                                         </li>
                                         <li class="list-group-item">
-                                            <i class="bi bi-heart me-2"></i><strong>ควบคุมน้ำหนัก</strong> การลดน้ำหนักสามารถช่วยควบคุมความดันได้
+                                            <i class="bi bi-check-circle me-2"></i><strong>ทำความเข้าใจเกี่ยวกับสภาพสุขภาพในปัจจุบัน</strong> เช่น โรคประจำตัวหรือปัญหาสุขภาพที่สำคัญ
                                         </li>
                                         <li class="list-group-item">
-                                            <i class="bi bi-heart me-2"></i><strong>ควบคุมอาหาร</strong> หลีกเลี่ยงอาหารโซเดียมสูง และอาหารที่ทำให้ความดันสูง
+                                            <i class="bi bi-check-circle me-2"></i><strong>ประเมินความสามารถในการทำกิจกรรมต่างๆ</strong> เช่น การเคลื่อนไหว การทานอาหาร หรือการออกกำลังกาย
                                         </li>
                                         <li class="list-group-item">
-                                            <i class="bi bi-heart me-2"></i><strong>ออกกำลังกายสม่ำเสมอ</strong> อย่างน้อย 30 นาที 5 วัน/สัปดาห์
+                                            <i class="bi bi-check-circle me-2"></i><strong>ดูแลเรื่องอารมณ์และจิตใจ</strong> สำรวจสภาวะจิตใจและความเครียดของผู้สูงอายุ
                                         </li>
                                         <li class="list-group-item">
-                                            <i class="bi bi-heart me-2"></i><strong>ผ่อนคลายความเครียด</strong> โดยการทำสมาธิหรือการพักผ่อน
+                                            <i class="bi bi-check-circle me-2"></i><strong>ติดตามผลอย่างสม่ำเสมอ</strong> ควรมีการติดตามและประเมินผลการดูแลผู้สูงอายุเพื่อพัฒนาแผนการดูแลอย่างเหมาะสม
                                         </li>
                                     </ul>
 
-                                    <p class="mt-3 text-muted"><strong>หมายเหตุ:</strong> ติดตามคำแนะนำของแพทย์และดูแลความดันโลหิตเพื่อลดความเสี่ยงในอนาคต</p>
+                                    <p class="mt-3 text-muted"><strong>หมายเหตุ:</strong> โปรดปรึกษาผู้เชี่ยวชาญในการประเมินและการดูแลผู้สูงอายุเพื่อให้การดูแลดีที่สุด</p>
 
                                     <button type="button" id="closeHealthTipsPopup" class="btn btn-outline-danger mt-3 d-flex align-items-center">
                                         <i class="bi bi-x-circle me-2"></i> ปิด
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </form>
+    <!-- Carousel with Health Tips -->
+    <div id="healthTipsCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#healthTipsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#healthTipsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#healthTipsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#healthTipsCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <!-- Health Tips for Caregivers - Hypertension -->
+            <div class="carousel-item active">
+                <div class="d-flex justify-content-center align-items-center flex-column" style="min-height: 400px;">
+                    <div class="card text-center bg-light p-5 mb-2 w-75 shadow rounded">
+                        <h5 class="text-success fw-semibold mb-2">
+                            <i class="fas fa-heartbeat"></i> การดูแลความดันโลหิตในผู้สูงอายุ
+                        </h5>
+                        <p>การรักษาความดันโลหิตในผู้สูงอายุเป็นเรื่องที่สำคัญ ควรตรวจสุขภาพสม่ำเสมอและหมั่นติดตามข้อมูลอย่างใกล้ชิด</p>
+                        <ul class="text-start">
+                            <li>แนะนำให้ควบคุมอาหารที่มีโซเดียมสูง</li>
+                            <li>ออกกำลังกายเป็นประจำเพื่อช่วยปรับความดัน</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Tips for Caregivers - Heart Disease -->
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center flex-column" style="min-height: 400px;">
+                    <div class="card text-center bg-light p-5 mb-2 w-75 shadow rounded">
+                        <h5 class="text-danger fw-semibold mb-2">
+                            <i class="fas fa-heart"></i> การดูแลสุขภาพโรคหัวใจ
+                        </h5>
+                        <p>โรคหัวใจเป็นโรคที่พบบ่อยในผู้สูงอายุ ต้องให้ความสำคัญกับการดูแลสุขภาพหัวใจอย่างต่อเนื่อง</p>
+                        <ul class="text-start">
+                            <li>ให้คำแนะนำเกี่ยวกับการควบคุมอาหารที่มีไขมันสูง</li>
+                            <li>หลีกเลี่ยงการเครียด และสนับสนุนให้มีการพักผ่อนที่เพียงพอ</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Tips for Caregivers - Diabetes -->
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center flex-column" style="min-height: 400px;">
+                    <div class="card text-center bg-light p-5 mb-2 w-75 shadow rounded">
+                        <h5 class="text-primary fw-semibold mb-2">
+                            <i class="fas fa-tint"></i> การดูแลโรคเบาหวานในผู้สูงอายุ
+                        </h5>
+                        <p>ควรตรวจวัดระดับน้ำตาลในเลือดอย่างสม่ำเสมอและการควบคุมอาหารที่เป็นประโยชน์</p>
+                        <ul class="text-start">
+                            <li>การรับประทานอาหารที่มีกากใยสูงและน้ำตาลต่ำ</li>
+                            <li>การออกกำลังกายที่สม่ำเสมอและเหมาะสม</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Tips for Caregivers - Oral and Eye Health -->
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center flex-column" style="min-height: 400px;">
+                    <div class="card text-center bg-light p-5 mb-2 w-75 shadow rounded">
+                        <h5 class="text-info fw-semibold mb-2">
+                            <i class="fas fa-eye"></i> การดูแลสุขภาพปากและตา
+                        </h5>
+                        <p>การรักษาสุขภาพช่องปากและตาเป็นส่วนสำคัญในผู้สูงอายุ เพื่อให้คุณภาพชีวิตดีขึ้น</p>
+                        <ul class="text-start">
+                            <li>แนะนำให้ทำความสะอาดช่องปากและฟันหลังมื้ออาหาร</li>
+                            <li>หมั่นตรวจสุขภาพตาเพื่อป้องกันโรคตาที่พบบ่อยในผู้สูงอายุ</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#healthTipsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#healthTipsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>
 
 <style>
+    
+    /* Custom CSS for Carousel */
+    #healthTipsCarousel .carousel-indicators button {
+        background-color: #5b8c2a;
+        border: none;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+    }
+
+    #healthTipsCarousel .carousel-indicators .active {
+        background-color: #1a7e34;
+        opacity: 1; 
+        margin-bottom: 20px;
+    }
+
+    /* Adjust Card styling for a cleaner look */
+    #healthTipsCarousel .carousel-item .card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* #healthTipsCarousel .carousel-item .card:hover {
+        transform: translateY(-5px);
+    } */
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        #healthTipsCarousel .carousel-item .card {
+            width: 90%;
+        }
+
+        #healthTipsCarousel .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        #healthTipsCarousel .carousel-item .card {
+            width: 95%;
+        }
+    }
+
     /* เพิ่ม margin ให้ระหว่างข้อความและไอคอน */
     .btn i, .list-group-item i {
         font-size: 1.2rem;
@@ -193,6 +337,17 @@
         background-color: #e7f8e5;
         color: #5f9a74;
     }
+
+    .btn-outline-warning {
+        background-color: #ffc107; /* ตัวอย่าง: สีเหลืองสำหรับ background */
+        color: #fff; /* ตัวอย่าง: สีขาวสำหรับข้อความ */
+    }
+/* 
+    .btn-outline-warning:hover {
+        background-color: #e0a800; 
+        color: #fff;
+    } */
+
     .btn-primary {
         background-color: #007bff;
         color: white;
@@ -225,6 +380,7 @@
         align-items: center;
         justify-content: center;
         z-index: 1000;
+        background-color: rgba(0, 0, 0, 0.5);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
@@ -236,10 +392,12 @@
 
     .popup-content {
         width: 80%;
-        max-width: 500px;
+        max-width: 800px;
         margin: auto;
         transform: translateY(100px);
         animation: slideUp 0.5s forwards;
+        overflow-y: auto;
+        max-height: 70vh; /* กำหนดความสูงสูงสุด 80% ของหน้าจอ */
     }
 
     @keyframes slideUp {
@@ -331,17 +489,19 @@
     });
 
     // เมื่อมีการเลือกผู้สูงอายุ
-    document.getElementById('elder_id').addEventListener('change', function () {
+    document.getElementById('user_id').addEventListener('change', function () {
         var selectedOption = this.options[this.selectedIndex];
         var elderName = selectedOption.getAttribute('data-name');
         var elderAge = selectedOption.getAttribute('data-age');
         var elderGender = selectedOption.getAttribute('data-gender');
         var elderImage = selectedOption.getAttribute('data-image');
+        var lastAssessment = selectedOption.getAttribute('data-last-assessment');
 
         // แสดงข้อมูลผู้สูงอายุ
         document.getElementById('elderName').textContent = elderName;
         document.getElementById('elderAge').textContent = elderAge;
         document.getElementById('elderGender').textContent = elderGender;
+        document.getElementById('lastAssessmentDate').textContent = lastAssessment;
 
         // แสดงรูปโปรไฟล์
         document.getElementById('profileImage').src = elderImage;

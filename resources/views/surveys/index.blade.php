@@ -29,7 +29,7 @@
     <div class="row g-4">
         <!-- Physical Health Assessments -->
         <div class="col-lg-8 col-md-7 mb-5">
-            <h2 class="fw-bold text-success mb-3">คัดกรองโรคสำคัญและภาวะสุขภาพ</h2>
+            <h2 class="fw-bold text-success mb-4">คัดกรองโรคสำคัญและภาวะสุขภาพ</h2>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
@@ -37,7 +37,7 @@
                             <i class="bi bi-heart fs-1 text-danger"></i>
                             <h5 class="card-title mt-3">ประเมินความเสี่ยงโรคทั่วไป</h5>
                             <p class="text-muted">วิเคราะห์สุขภาพในด้านต่างๆ เช่น ระดับน้ำตาลในเลือด, ความดันโลหิต, สุขภาพช่องปาก, และสุขภาพทางตา พร้อมรับคำแนะนำดูแลสุขภาพ</p>
-                            <a href="{{ route('health_assessment.index') }}" class="btn btn-danger mt-2">
+                            <a href="{{ route('health_assessments.create') }}" class="btn btn-danger mt-2">
                                 เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
                             </a>
                         </div>
@@ -57,7 +57,7 @@
                 </div> --}}
             </div>
 
-            <h2 class="fw-bold text-primary mt-4 mb-3">การคัดกรองกลุ่ม Geriatric Syndromes</h2>
+            <h2 class="fw-bold text-primary mt-5 mb-4">การคัดกรองกลุ่ม Geriatric Syndromes</h2>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
@@ -85,7 +85,7 @@
                 </div> --}}
             </div>
 
-            <h2 class="fw-bold text-secondary mt-4 mb-3">การประเมินความสามารถในการทำกิจวัตรประจำวัน (Activities of Daily Living)</h2>
+            <h2 class="fw-bold text-secondary mt-5 mb-4">การประเมินความสามารถในการทำกิจวัตรประจำวัน (Activities of Daily Living)</h2>
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
