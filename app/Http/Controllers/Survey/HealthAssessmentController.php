@@ -16,22 +16,28 @@ class HealthAssessmentController extends Controller
 {
     public function dashboard()
     {
-        // ดึงข้อมูลจำนวนผู้สูงอายุที่มีความเสี่ยง
+        // ดึงข้อมูลจำนวนผู้สูงอายุที่มีความเสี่ยงจากการตรวจสุขภาพ
         $hypertensionRiskCount = HealthAssessment::whereHas('hypertensionHealth', function ($query) {
-            $query->where('hypertension_status', 'treated')->orWhere('hypertension_status', 'untreated');
-        })->count();
+            $query->where('hypertension_status', 'treated')
+                ->orWhere('hypertension_status', 'untreated');
+        })->distinct('user_id') // ตรวจสอบให้แสดงแค่ครั้งแรกของ user
+        ->count();
 
         $diabetesRiskCount = HealthAssessment::whereHas('diabetesHealth', function ($query) {
-            $query->where('diabetes_status', 'treated')->orWhere('diabetes_status', 'untreated');
-        })->count();
+            $query->where('diabetes_status', 'treated')
+                ->orWhere('diabetes_status', 'untreated');
+        })->distinct('user_id') // ตรวจสอบให้แสดงแค่ครั้งแรกของ user
+        ->count();
 
         $oralHealthRiskCount = HealthAssessment::whereHas('oralHealth', function ($query) {
             $query->where('brushing_frequency', 'not sufficient');
-        })->count();
+        })->distinct('user_id') // ตรวจสอบให้แสดงแค่ครั้งแรกของ user
+        ->count();
 
         $eyeHealthRiskCount = HealthAssessment::whereHas('eyeHealth', function ($query) {
             $query->where('has_eye_issue', true);
-        })->count();
+        })->distinct('user_id') // ตรวจสอบให้แสดงแค่ครั้งแรกของ user
+        ->count();
 
         return view('dashboard.risks.bgs.summary', compact(
             'hypertensionRiskCount',
@@ -40,6 +46,164 @@ class HealthAssessmentController extends Controller
             'eyeHealthRiskCount'
         ));
     }
+
+
+   public function showRisk($type)
+{
+    switch ($type) {
+        case 'hypertension':
+            $riskCount = HealthAssessment::whereHas('hypertensionHealth', function ($query) {
+                $query->where('hypertension_status', 'treated')
+                    ->orWhere('hypertension_status', 'untreated');
+            })
+            ->distinct('user_id')
+            ->count();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามเดือน
+            $riskStatsMonth = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, count(distinct user_id) as risk_count')
+                ->whereHas('hypertensionHealth', function ($query) {
+                    $query->where('hypertension_status', 'treated')
+                        ->orWhere('hypertension_status', 'untreated');
+                })
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามวัน
+            $riskStatsDay = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m-%d") as day, count(distinct user_id) as risk_count')
+                ->whereHas('hypertensionHealth', function ($query) {
+                    $query->where('hypertension_status', 'treated')
+                        ->orWhere('hypertension_status', 'untreated');
+                })
+                ->groupBy('day')
+                ->orderBy('day')
+                ->get();
+
+            $riskDetails = HealthAssessment::whereHas('hypertensionHealth', function ($query) {
+                $query->where('hypertension_status', 'treated')
+                    ->orWhere('hypertension_status', 'untreated');
+            })
+            ->get()
+            ->unique('user_id');
+
+            break;
+
+        case 'diabetes':
+            $riskCount = HealthAssessment::whereHas('diabetesHealth', function ($query) {
+                $query->where('diabetes_status', 'treated')
+                    ->orWhere('diabetes_status', 'untreated');
+            })
+            ->distinct('user_id')
+            ->count();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามเดือน
+            $riskStatsMonth = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, count(distinct user_id) as risk_count')
+                ->whereHas('diabetesHealth', function ($query) {
+                    $query->where('diabetes_status', 'treated')
+                        ->orWhere('diabetes_status', 'untreated');
+                })
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามวัน
+            $riskStatsDay = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m-%d") as day, count(distinct user_id) as risk_count')
+                ->whereHas('diabetesHealth', function ($query) {
+                    $query->where('diabetes_status', 'treated')
+                        ->orWhere('diabetes_status', 'untreated');
+                })
+                ->groupBy('day')
+                ->orderBy('day')
+                ->get();
+
+            $riskDetails = HealthAssessment::whereHas('diabetesHealth', function ($query) {
+                $query->where('diabetes_status', 'treated')
+                    ->orWhere('diabetes_status', 'untreated');
+            })
+            ->get()
+            ->unique('user_id');
+
+            break;
+
+        case 'oralHealth':
+            $riskCount = HealthAssessment::whereHas('oralHealth', function ($query) {
+                $query->where('brushing_frequency', 'not sufficient');
+            })
+            ->count();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามเดือน
+            $riskStatsMonth = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, count(distinct user_id) as risk_count')
+                ->whereHas('oralHealth', function ($query) {
+                    $query->where('brushing_frequency', 'not sufficient');
+                })
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามวัน
+            $riskStatsDay = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m-%d") as day, count(distinct user_id) as risk_count')
+                ->whereHas('oralHealth', function ($query) {
+                    $query->where('brushing_frequency', 'not sufficient');
+                })
+                ->groupBy('day')
+                ->orderBy('day')
+                ->get();
+
+            $riskDetails = HealthAssessment::whereHas('oralHealth', function ($query) {
+                $query->where('brushing_frequency', 'not sufficient');
+            })
+            ->get()
+            ->unique('user_id');
+
+            break;
+
+        case 'eyeHealth':
+            $riskCount = HealthAssessment::whereHas('eyeHealth', function ($query) {
+                $query->where('has_eye_issue', true);
+            })
+            ->distinct('user_id')
+            ->count();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามเดือน
+            $riskStatsMonth = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, count(distinct user_id) as risk_count')
+                ->whereHas('eyeHealth', function ($query) {
+                    $query->where('has_eye_issue', true);
+                })
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+
+            // ดึงข้อมูลการเปลี่ยนแปลงความเสี่ยงตามวัน
+            $riskStatsDay = HealthAssessment::selectRaw('DATE_FORMAT(created_at, "%Y-%m-%d") as day, count(distinct user_id) as risk_count')
+                ->whereHas('eyeHealth', function ($query) {
+                    $query->where('has_eye_issue', true);
+                })
+                ->groupBy('day')
+                ->orderBy('day')
+                ->get();
+
+            $riskDetails = HealthAssessment::whereHas('eyeHealth', function ($query) {
+                $query->where('has_eye_issue', true);
+            })
+            ->get()
+            ->unique('user_id');
+
+            break;
+
+        default:
+            $riskCount = 0;
+            $riskStatsMonth = collect();
+            $riskStatsDay = collect();
+            $riskDetails = collect();
+            break;
+    }
+
+    return view('dashboard.risks.bgs.details', compact('riskCount', 'type', 'riskStatsMonth', 'riskStatsDay', 'riskDetails'));
+}
+
+
+
+
 
     // หน้าแสดงฟอร์มสำหรับกรอกแบบประเมิน
     public function create()

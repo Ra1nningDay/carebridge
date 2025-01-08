@@ -36,11 +36,14 @@ class AppointmentController extends Controller
     {
         // ดึงค่า elderly_id จาก URL
         $elderly_id = $request->query('elderly_id');
-
+        
         // ค้นหาผู้สูงอายุที่ตรงกับ ID ที่ได้รับ
         $elderly = User::whereHas('roles', function($query) {
             $query->where('name', 'patient'); // ค้นหาเฉพาะบทบาทผู้สูงอายุ
         })->findOrFail($elderly_id);
+
+        // ค้นหาผู้ดูแลที่เชื่อมโยงกับผู้สูงอายุในตาราง elderly_caregiver
+        $caregiver = $elderly->caregiver()->first();  // หาผู้ดูแลของผู้สูงอายุที่ตรง
 
         // ดึงข้อมูลผู้ดูแลทั้งหมด
         $caregivers = User::whereHas('roles', function($query) {
@@ -53,8 +56,9 @@ class AppointmentController extends Controller
         })->get();
 
         // ส่งค่าทั้งหมดไปที่ view
-        return view('appointments.create', compact('elderly', 'caregivers', 'doctors', 'elderly_id'));
+        return view('appointments.create', compact('elderly', 'caregiver', 'caregivers', 'doctors', 'elderly_id'));
     }
+
 
     public function show($id)
     {

@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+@extends('layouts.app')
+
+@section('content')
 <style>
     /* Container Styling */
     .container {
         max-width: 900px; /* Narrower width for content */
     }
-
 
     /* Card Styling: Hover effect, border-radius, box-shadow */
     .card {
@@ -62,18 +64,6 @@
         color: #fff;
     }
 
-    .btn-select-doctor {
-        padding: 8px 16px;
-        font-weight: bold;
-        border-radius: 30px;
-        transition: background-color 0.3s ease, border 0.3s ease;
-    }
-
-    .btn-select-doctor:hover {
-        background-color: #007bff;
-        color: #fff;
-    }
-
     button[type="submit"] {
         padding: 12px;
         font-size: 1.1rem;
@@ -125,11 +115,6 @@
         background-color: #e2f9e1;
         color: #28a745;
     }
-
-    .selected-doctor {
-        background-color: #28a745 !important;  /* สีเขียวสำหรับปุ่มที่เลือก */
-        color: white;  /* เปลี่ยนข้อความเป็นสีขาว */
-    }
 </style>
 
 <div class="container py-5">
@@ -141,7 +126,7 @@
         <div class="alert alert-success mb-4">{{ session('success') }}</div>
     @endif
 
-    <!-- Success Message -->
+    <!-- Error Message -->
     @if(session('error'))
         <div class="alert alert-danger mb-4">{{ session('error') }}</div>
     @endif
@@ -165,42 +150,19 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Caregiver Info -->
                 <div class="col-md-6">
                     <label for="caregiver_name" class="form-label h5 text-primary">ข้อมูลผู้ดูแล</label>
                     <div class="card bg-light border-primary shadow-sm rounded-3">
                         <div class="card-body d-flex">
-                            <img src="{{ auth()->user()->avatar_url }}" alt="Caregiver Avatar" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            <img src="{{ $caregiver->avatar_url }}" alt="Caregiver Avatar" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
                             <div class="ms-3 d-flex flex-column">
-                                <h5 class="card-title text-dark mb-2">{{ auth()->user()->name ?? 'ไม่มีข้อมูลผู้ดูแล' }}</h5>
-                                <p><strong>เบอร์โทร: </strong>{{ auth()->user()->phone ?? 'ไม่มีข้อมูล' }}</p>
-                                <p><strong>อีเมล: </strong>{{ auth()->user()->email ?? 'ไม่มีข้อมูล' }}</p>
+                                <h5 class="card-title text-dark mb-2">{{ $caregiver->name ?? 'ไม่มีข้อมูลผู้ดูแล' }}</h5>
+                                <p><strong>เบอร์โทร: </strong>{{ $caregiver->phone ?? 'ไม่มีข้อมูล' }}</p>
+                                <p><strong>อีเมล: </strong>{{ $caregiver->email ?? 'ไม่มีข้อมูล' }}</p>
                             </div>     
                         </div>
                     </div>
-                </div>
-            </div>
-
-
-            <!-- Select Doctor -->
-            <div class="mb-4">
-                <label for="doctor_id" class="form-label h5 text-primary">เลือกแพทย์</label>
-                <div class="row row-cols-1 row-cols-md-3 g-3">
-                    @foreach($doctors as $doctor)
-                        <div class="col">
-                            <div class="card border-primary rounded-3 shadow-sm">
-                                <div class="card-body text-center">
-                                    <img src="{{ $doctor->avatar_url }}" alt="Doctor Avatar" class="rounded-circle mb-3">
-                                    <h5 class="card-title text-dark">{{ $doctor->name }}</h5>
-                                    <p class="card-text text-secondary">{{ $doctor->specialization ?? 'ไม่มีข้อมูลความเชี่ยวชาญ' }}</p>
-                                    <button type="button" class="btn btn-outline-primary btn-select-doctor" data-id="{{ $doctor->id }}">
-                                        เลือกแพทย์
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
                 </div>
             </div>
 
@@ -216,7 +178,6 @@
                 </div>
             </div>
 
-
             <!-- Notes -->
             <div class="mb-4">
                 <label for="notes" class="form-label h5 text-primary">ข้อความเพิ่มเติม</label>
@@ -225,14 +186,14 @@
 
             <!-- Hidden Inputs -->
             <input type="hidden" name="elderly_id" value="{{ $elderly->id }}">
-            <input type="hidden" name="caregiver_id" value="{{ auth()->user()->id }}">
-            <input type="hidden" name="doctor_id" id="doctor_id" value="">
-
+            
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">สร้างนัดหมาย</button>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">ยันยันการนัดหมาย</button>
         </form>
     </div>
 </div>
+@endsection
+
 
 <script>
     document.querySelectorAll('.btn-select-doctor').forEach(button => {

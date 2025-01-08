@@ -28,29 +28,51 @@ class DashboardController extends Controller
                                 ->orderBy('month')
                                 ->pluck('count', 'month');
 
+        // ข้อมูลผู้ใช้งานในแต่ละวัน
+        $dailyUserStats = User::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                            ->groupBy('date')
+                            ->orderBy('date')
+                            ->pluck('count', 'date');
+
+        // ข้อมูลผู้ใช้งานในแต่ละปี
+        $yearlyUserStats = User::selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+                            ->groupBy('year')
+                            ->orderBy('year')
+                            ->pluck('count', 'year');
+
         // สร้างอาร์เรย์ 12 เดือนเริ่มต้นด้วยค่า 0
         $monthlyStatsWithZeros = array_fill(1, 12, 0);
+        $dailyStatsWithZeros = array_fill(1, 31, 0); // เริ่มต้นวันแรกจากวันที่ 1 ถึง 31
+        $yearlyStatsWithZeros = array_fill(2020, date('Y') - 2020 + 1, 0); // เริ่มต้นตั้งแต่ปี 2020
 
         // เติมค่าจาก $monthlyUserStats ลงใน $monthlyStatsWithZeros
         foreach ($monthlyUserStats as $month => $count) {
             $monthlyStatsWithZeros[$month] = $count;
         }
 
-        
+        // เติมค่าจาก $dailyUserStats ลงใน $dailyStatsWithZeros
+        foreach ($dailyUserStats as $date => $count) {
+            $dailyStatsWithZeros[date('d', strtotime($date))] = $count;
+        }
 
-        // ตรวจสอบผลลัพธ์
-        // dd($monthlyStatsWithZeros);
+        // เติมค่าจาก $yearlyUserStats ลงใน $yearlyStatsWithZeros
+        foreach ($yearlyUserStats as $year => $count) {
+            $yearlyStatsWithZeros[$year] = $count;
+        }
 
-        // ส่งตัวแปรทั้งหมดไปยัง View
+        // ส่งข้อมูลทั้งหมดไปยัง View
         return view('dashboard.dashboard', compact(
             'postCount', 
             'userCount', 
             'caregiverCount', 
             'visitCount', 
             'commentCount', 
-            'monthlyStatsWithZeros'
+            'monthlyStatsWithZeros', 
+            'dailyStatsWithZeros',
+            'yearlyStatsWithZeros'
         ));
     }
+
 
     // public function map() {
     //     return view('dashboard.risks.map'); // เพิ่มเนื้อหาแผนที่ใน view นี้

@@ -14,13 +14,27 @@
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-3">{{ $appointment->doctor->name }}</h5>
-                                <span class="text-muted">{{ \Carbon\Carbon::parse($appointment->date)->format('d M Y') }}</span>
+                                <span class="text-muted">{{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('d M Y') }}</span>
                             </div>
 
                             <div class="d-flex justify-content-between mb-3">
                                 <p class="card-text mb-0">
                                     <i class="fas fa-clock"></i> 
-                                    {{ \Carbon\Carbon::parse($appointment->time)->format('H:i') }}
+                                    {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('H:i') }}
+                                </p>
+                            </div>
+
+                            <!-- รายละเอียดผู้สูงอายุและผู้ดูแล -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <p class="card-text mb-0"><strong>ผู้สูงอายุ:</strong> {{ $appointment->elderly->name }}</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <p class="card-text mb-0"><strong>ผู้ดูแล:</strong> 
+                                    @if($appointment->caregiver)
+                                        {{ $appointment->caregiver->name }}
+                                    @else
+                                        ไม่พบข้อมูลผู้ดูแล
+                                    @endif
                                 </p>
                             </div>
                             

@@ -87,6 +87,9 @@
             <div class="card shadow-sm rounded-3">
                 <div class="card-body">
                     <h5 class="card-title">สถิติการใช้งาน (กราฟ)</h5>
+                    <button id="dailyBtn" class="btn btn-primary">Daily</button>
+                    <button id="monthlyBtn" class="btn btn-primary">Monthly</button>
+                    <button id="yearlyBtn" class="btn btn-primary">Yearly</button>
                     <canvas id="userStatsChart"></canvas>
                 </div>
             </div>
@@ -101,30 +104,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        console.log("เริ่มการโหลด JavaScript สำหรับ Chart.js");
+    var dailyData = @json($dailyStatsWithZeros);
+    var monthlyData = @json($monthlyStatsWithZeros);
+    var yearlyData = @json($yearlyStatsWithZeros);
 
-        var labels = [
-            'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-        ];
-        var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0];
+    var labelsDaily = Array.from({ length: 31 }, (_, i) => i + 1);
+    var labelsMonthly = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+    var labelsYearly = Object.keys(yearlyData);
 
+    var ctx = document.getElementById('userStatsChart').getContext('2d');
 
-        var ctx = document.getElementById('userStatsChart');
-        if (!ctx) {
-            console.error("ไม่พบ Canvas ที่มี id='userStatsChart'");
-            return;
-        }
-
-        var chartCtx = ctx.getContext('2d');
-        if (!chartCtx) {
-            console.error("ไม่สามารถสร้าง context สำหรับ Canvas ได้");
-            return;
-        }
-
-        console.log("สร้าง context สำเร็จ:", chartCtx);
-
-        new Chart(chartCtx, {
+    function createChart(data, labels) {
+        return new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -145,9 +136,27 @@
                 }
             }
         });
+    }
 
-        console.log("กราฟถูกสร้างแล้ว");
+    var chart = createChart(monthlyData, labelsMonthly); // Default: Show Monthly
+
+    // Handle button click to switch views
+    document.getElementById('dailyBtn').addEventListener('click', function () {
+        chart.destroy();
+        chart = createChart(dailyData, labelsDaily);
     });
+
+    document.getElementById('monthlyBtn').addEventListener('click', function () {
+        chart.destroy();
+        chart = createChart(monthlyData, labelsMonthly);
+    });
+
+    document.getElementById('yearlyBtn').addEventListener('click', function () {
+        chart.destroy();
+        chart = createChart(Object.values(yearlyData), labelsYearly);
+    });
+});
+
 </script>
 
 

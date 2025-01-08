@@ -24,6 +24,8 @@ Route::prefix('dashboard')->middleware(['auth', 'verified', AdminOnly::class])->
         // สรุปข้อมูลเกี่ยวกับความเสี่ยงในกลุ่มผู้สูงอายุ หัวข้อ BGS (Health Risks)
         Route::get('/summary', [HealthAssessmentController::class, 'dashboard'])->name('summary');
 
+        Route::get('/summary/{type}', [HealthAssessmentController::class, 'showRisk'])->name('details');
+
         // // แผนที่สำหรับแสดงข้อมูล (Map)
         // Route::get('/map', [DashboardController::class, 'map'])->name('map');
 
