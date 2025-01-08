@@ -41,7 +41,7 @@
         
 
         
-        <!-- Edit Caregiver -->
+        {{-- <!-- Edit Caregiver -->
         @if (auth()->user()->caregiver)
             <li class="nav-item">
                 <h5 class="border-bottom pb-2">Caregiver Profile</h5>
@@ -53,7 +53,7 @@
                     Edit Caregiver
                 </a>
             </li>
-        @endif
+        @endif --}}
     </ul>
 
     <footer class="mt-auto text-center">

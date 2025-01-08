@@ -16,17 +16,48 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function index(Request $request):view 
+    public function index(Request $request): View
     {
+        // ดึงข้อมูลผู้ใช้งานปัจจุบัน
         $user = $request->user();
-        $personalInfo = $user->personalInfo; // ดึงข้อมูลส่วนตัวเพิ่มเติม
-        $posts = $user->posts()->latest()->get();
-        return view('profile.index',[
-            'user' => $user,
-            'personalInfo' => $personalInfo,
-            'posts' => $posts,
+
+        // ตรวจสอบว่าเป็นผู้ดูแลหรือไม่
+        if ($user->roles->contains('name', 'caregiver')) {
+            // กรณีเป็นผู้ดูแล ดึงข้อมูลของผู้สูงอายุที่ดูแล
+            $elderly = $user->elderly()->with(['personalInfo', 'physicalInfo', 'healthChecks'])->get();
+
+            // จัดข้อมูล physicalInfo สำหรับผู้สูงอายุที่ดูแล
+            $measurements = $elderly->map(function ($patient) {
+                return $patient->physicalInfo->map(function ($info) use ($patient) {
+                    return [
+                        'date' => $info->created_at->toDateString(),
+                        'height' => $info->height,
+                        'weight' => $info->weight,
+                        'patient_name' => $patient->name, // ชื่อของผู้สูงอายุ
+                    ];
+                });
+            })->flatten(1); // รวมข้อมูลใน array เดียว
+        } else {
+            // กรณีเป็นผู้สูงอายุ ดึงข้อมูลของตัวเอง
+            $elderly = collect([$user]);
+            $measurements = $user->physicalInfo->map(function ($info) {
+                return [
+                    'date' => $info->created_at->toDateString(),
+                    'height' => $info->height,
+                    'weight' => $info->weight,
+                ];
+            });
+        }
+
+        return view('profile.index', [
+            'user' => $user, // ข้อมูลผู้ใช้งานปัจจุบัน
+            'personalInfo' => $user->personalInfo, // ข้อมูลส่วนตัว
+            'elderly' => $elderly, // รายชื่อผู้สูงอายุที่เกี่ยวข้อง (กรณีเป็น caregiver)
+            'caregiver' => $user->caregiver, // ผู้ดูแล (กรณีผู้สูงอายุล็อกอิน)
+            'physicalInfo' => $measurements, // ข้อมูลสำหรับกราฟ
         ]);
     }
+
 
     public function edit(Request $request): View
     {

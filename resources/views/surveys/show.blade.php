@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('title', $assessment->name)
 
@@ -92,4 +92,4 @@
         border-color: #0a58ca;
     }
 </style>
-@endsection
+@endsection --}}

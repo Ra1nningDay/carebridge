@@ -21,8 +21,8 @@
                         <!-- Email Address -->
                         <div class="pt-3 mb-3">
                             <label for="email" class="form-label">อีเมล</label>
-                            <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" style="padding: 8px 16px;" />
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                            <input id="login" class="form-control" type="text" name="login" value="{{ old('login') }}" required autofocus autocomplete="username" style="padding: 8px 16px;" />
+                            <x-input-error :messages="$errors->get('login')" class="mt-2" />
                         </div>
                 
                         <!-- Password -->

@@ -71,6 +71,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class, 'author_id');
     }
+
+    // ความสัมพันธ์ระหว่าง User กับ HealthAsssment (การประเมินสุขภาพ)
+    public function healthAssessments()
+    {
+        return $this->hasMany(HealthAssessment::class);
+    }
     
     // ความสัมพันธ์ระหว่าง User กับ Caregiver (การเชื่อมโยงข้อมูลผู้ดูแลของผู้ใช้)
     public function caregiver()

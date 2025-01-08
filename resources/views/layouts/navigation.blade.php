@@ -32,9 +32,11 @@
                 {{-- <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('caregiver') }}">ค้นหาผู้ดูแล</a>
                 </li> --}}
-                <li class="nav-item">
-                    <a class="nav-link text-black px-3 py-0 " href="{{ route('survey.list') }}">ประเมินสุขภาพ</a>
-                </li>
+                @if(auth()->check() && auth()->user()->roles->where('name', 'patient')->isEmpty()) 
+                    <a class="nav-link text-black px-3 py-0" href="{{ route('survey.index') }}">ประเมินสุขภาพ</a>
+                @endif
+
+
                 <li class="nav-item">
                     <a class="nav-link text-black px-3 py-0 " href="{{ route('posts.index') }}">บทความ</a>
                 </li>
@@ -98,46 +100,126 @@
 
                 <!-- User Profile Dropdown -->
                 <div class="dropdown">
-                    <button class="btn bg-light rounded-circle p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img class="rounded-circle" src="{{ auth()->user()->avatar_url }}" width="40" height="40" alt="">
+                    <button class="btn bg-light d-flex align-items-center p-2 rounded-pill shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- Profile Picture -->
+                        <img class="rounded-circle me-2" src="{{ auth()->user()->avatar_url }}" width="40" height="40" alt="Profile Picture">
+
+                        <!-- User Info -->
+                        <div class="d-flex flex-column text-start">
+                            <p class="mb-0 fw-semibold text-truncate" style="max-width: 150px;">{{ auth()->user()->name }}</p>
+                            <small class="text-muted">
+                                @if(auth()->user()->roles->isNotEmpty())
+                                    @php
+                                        // Map ชื่อ Role กับชื่อที่ต้องการแสดง
+                                        $roleMapping = [
+                                            'caregiver' => 'ผู้ดูแล',
+                                            'admin' => 'เจ้าหน้าที่',
+                                            'patient' => 'ผู้สูงอายุ',
+                                        ];
+                                    @endphp
+
+                                    {{-- แสดง Role โดยแปลงชื่อผ่าน $roleMapping --}}
+                                    {{ auth()->user()->roles->pluck('name')->map(fn($role) => $roleMapping[$role] ?? $role)->join(', ') }}
+                                @else
+                                    ไม่ได้กำหนดบทบาท
+                                @endif
+                            </small>
+                        </div>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
+                    <ul class="dropdown-menu dropdown-menu-end p-3 shadow rounded-3" style="width: 250px;">
+                        <!-- ส่วนข้อมูลโปรไฟล์ -->
+                        <div class="text-center mb-3">
+                            <img class="rounded-circle border border-secondary" 
+                                src="{{ auth()->user()->avatar_url }}" width="80" height="80" alt="Profile Picture">
+                            <h6 class="mt-2 mb-0">{{ auth()->user()->name ?? 'ไม่ระบุชื่อ' }}</h6>
+                            <small class="text-muted">
+                                @if(auth()->user()->roles->isNotEmpty())
+                                    @php
+                                        // Map ชื่อ Role กับชื่อที่ต้องการแสดง
+                                        $roleMapping = [
+                                            'caregiver' => 'ผู้ดูแล',
+                                            'admin' => 'เจ้าหน้าที่',
+                                            'patient' => 'ผู้สูงอายุ',
+                                        ];
+                                    @endphp
+
+                                    {{-- แสดง Role โดยแปลงชื่อผ่าน $roleMapping --}}
+                                    {{ auth()->user()->roles->pluck('name')->map(fn($role) => $roleMapping[$role] ?? $role)->join(', ') }}
+                                @else
+                                    ไม่ได้กำหนดบทบาท
+                                @endif
+                            </small>
+                        </div>
+                        <hr class="my-2">
+                        {{-- <!-- แสดงข้อมูลผู้ดูแลหากผู้ใช้มีบทบาทเป็นผู้สูงอายุ -->
+                        @if(auth()->user()->roles->contains('name', 'patient'))
+                            @if(auth()->user()->caregiver->isNotEmpty())
+                                <div class="my-3">
+                                    <div class="row g-3 align-items-center">
+                                        <!-- รูปภาพผู้ดูแล -->
+                                        <div class="col-4">
+                                            <img src="{{ auth()->user()->caregiver->first()->avatar_url ?? asset('images/avatars/default-avatar.png') }}"
+                                                alt="Caregiver Profile Picture" class="rounded-circle" width="60" height="60">
+                                        </div>
+
+                                        <!-- ข้อมูลผู้ดูแล -->
+                                        <div class="col-8">
+                                            <h6 class="mt-2 mb-0">{{ auth()->user()->caregiver->first()->name ?? 'ไม่มีชื่อ' }}</h6>
+                                            <small class="text-muted">ผู้ดูแลของคุณ</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                            @else
+                                <div class="text-center mt-3">
+                                    <p class="text-muted">ไม่มีข้อมูลผู้ดูแลที่เชื่อมโยง</p>
+                                </div>
+                            @endif
+                        @endif --}}
+
+
+
+                        <!-- ลิงก์เมนู -->
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.index') }}">
-                                <i class="bi bi-person-circle me-2 text-menu-icon"></i> โปรไฟล์
+                            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('profile.index') }}">
+                                <i class="bi bi-person-circle me-2"></i> ข้อมูลสุขภาพ
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-pencil-square me-2 text-menu-icon"></i> แก้ไขโปรไฟล์
-                            </a>
-                        </li>
-                        {{-- <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('caregiver.register') }}">
-                                <i class="bi bi-person-plus-fill me-2 text-menu-icon"></i> สมัครเป็นผู้ดูแล
-                            </a>
-                        </li> --}}
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('evaluations.form') }}">
-                                <i class="bi bi-star-fill me-2 text-menu-icon"></i> ให้คะแนนเว็บไซต์ของเรา
+                            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('profile.edit') }}">
+                                <i class="bi bi-pencil-square me-2"></i> แก้ไขข้อมูลส่วนตัว
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-right me-2 text-menu-icon"></i> ออกจากระบบ
+                            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('appointments.index') }}">
+                                <i class="bi bi-calendar me-2"></i> การนัดหมาย
                             </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
                         </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('evaluations.form') }}">
+                                <i class="bi bi-star-fill me-2"></i> ให้คะแนนเว็บไซต์ของเรา
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center py-2 text-danger" 
+                                href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="bi bi-box-arrow-right me-2"></i> ออกจากระบบ
+                            </a>
+                        </li>
+
+                        <!-- ฟอร์ม Logout -->
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     </ul>
                 </div>
+
 
 
             @else
                 <div class="d-flex">
                     <a href="{{ route('register') }}" class="btn ms-2 d-none d-md-block">สมัครสมาชิก</a>
-                    <a href="{{ route('login') }}" class="btn btn-login rounded-5 ms-2" style="background-color: #003e29">เข้าสู่ระบบ</a>
+                    <a href="{{ route('login') }}" class="btn btn-login rounded-5 ms-2">เข้าสู่ระบบ</a>
                 </div>
             @endauth
             </div>
@@ -188,7 +270,13 @@
     }
 
     .btn-login {
-        color: #f1f1f1
+        color: #f1f1f1;
+        background-color: #003e29;
+    }
+
+    .btn-login:hover {
+        color: #f1f1f1;
+        background-color: #467061;
     }
 
     /* รูปโปรไฟล์ในรายการสนทนา */
