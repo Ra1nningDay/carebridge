@@ -23,6 +23,7 @@ require __DIR__.'/survey.php';
 require __DIR__.'/chat.php';
 require __DIR__.'/evaluation.php';
 require __DIR__.'/appointment.php';
+require __DIR__.'/zoom.php';
 
 // ภาษา
 Route::get('lang/{locale}', function ($locale) {
