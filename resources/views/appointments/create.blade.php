@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@extends('layouts.app')
-
-@section('content')
 <style>
     /* Container Styling */
     .container {
@@ -192,8 +189,6 @@
         </form>
     </div>
 </div>
-@endsection
-
 
 <script>
     document.querySelectorAll('.btn-select-doctor').forEach(button => {

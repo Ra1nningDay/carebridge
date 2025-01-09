@@ -118,4 +118,20 @@ class AppointmentController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        $appointment = Appointment::findOrFail($id); // ค้นหาการนัดหมาย
+        
+        // ตรวจสอบสิทธิ์ (Optionally ใช้ Policy สำหรับการตรวจสอบเพิ่มเติม)
+        if (!auth()->user()->roles->contains('name', 'caregiver') || $appointment->caregiver_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // อัปเดตสถานะของการนัดหมาย
+        $appointment->update([
+            'status' => $request->input('status'),
+        ]);
+
+        return redirect()->route('appointments.index')->with('success', 'Appointment status updated successfully!');
+    }
 }
