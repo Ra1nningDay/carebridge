@@ -51,7 +51,16 @@
                                         @if($appointment->elderly_id == auth()->id() || $appointment->caregiver_id == auth()->id() || $appointment->doctor_id == auth()->id())
                                             {{-- หากมี Zoom Link --}}
                                             @if($appointment->zoom_link)
-                                                <a href="{{ $appointment->zoom_link }}" class="btn btn-success w-100" target="_blank">เข้าสู่ห้องประชุม Zoom</a>
+                                                <div class="d-flex justify-content-between">
+                                                    {{-- ปุ่มเข้าผ่านแอป --}}
+                                                    <a href="{{ $appointment->zoom_link }}" class="btn btn-success w-50 me-2" target="_blank">
+                                                        เข้าผ่านแอป
+                                                    </a>
+                                                    {{-- ปุ่มเข้าผ่านเบราว์เซอร์ --}}
+                                                    <a href="{{ $appointment->zoom_link }}?browser=1" class="btn btn-secondary w-50" target="_blank">
+                                                        เข้าผ่านเบราว์เซอร์
+                                                    </a>
+                                                </div>
                                             {{-- หากยังไม่มี Zoom Link --}}
                                             @else
                                                 <form action="{{ route('appointments.createZoom', $appointment->id) }}" method="POST">
@@ -69,6 +78,7 @@
                                     <p class="text-muted">การนัดหมายยังไม่ยืนยัน</p>
                                 @endif
                             </div>
+
 
 
 

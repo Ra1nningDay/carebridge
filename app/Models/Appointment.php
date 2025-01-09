@@ -9,6 +9,10 @@ class Appointment extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+    ];
+
     protected $fillable = [
         'elderly_id',
         'caregiver_id',
