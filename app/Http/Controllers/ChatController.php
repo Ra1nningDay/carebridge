@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Models\Appointment;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,26 +55,26 @@ class ChatController extends Controller
         return view('chat.show', compact('conversation'));
     }
 
-    // เพิ่มฟังก์ชันใน ChatController:
-    public function startGroupConversation($appointmentId)
-    {
-        $appointment = Appointment::findOrFail($appointmentId);
+    // // เพิ่มฟังก์ชันใน ChatController:
+    // public function startGroupConversation($appointmentId)
+    // {
+    //     $appointment = Appointment::findOrFail($appointmentId);
 
-        // ตรวจสอบว่าใครสามารถเริ่มแชทได้ (ผู้สูงอายุ, ผู้ดูแล, แพทย์)
-        if (!($appointment->elderly_id == auth()->id() || $appointment->caregiver_id == auth()->id() || $appointment->doctor_id == auth()->id())) {
-            return redirect()->back()->with('error', 'คุณไม่มีสิทธิ์เริ่มการสนทนา');
-        }
+    //     // ตรวจสอบว่าใครสามารถเริ่มแชทได้ (ผู้สูงอายุ, ผู้ดูแล, แพทย์)
+    //     if (!($appointment->elderly_id == auth()->id() || $appointment->caregiver_id == auth()->id() || $appointment->doctor_id == auth()->id())) {
+    //         return redirect()->back()->with('error', 'คุณไม่มีสิทธิ์เริ่มการสนทนา');
+    //     }
 
-        // ค้นหาหรือสร้างการสนทนากลุ่ม
-        $conversation = Conversation::firstOrCreate([
-            'title' => 'กลุ่มสนทนา',
-        ]);
+    //     // ค้นหาหรือสร้างการสนทนากลุ่ม
+    //     $conversation = Conversation::firstOrCreate([
+    //         'title' => 'กลุ่มสนทนา',
+    //     ]);
 
-        // เชื่อมโยงผู้ที่เกี่ยวข้องในการสนทนานี้ (ผู้สูงอายุ, ผู้ดูแล, แพทย์)
-        $conversation->users()->attach([$appointment->elderly_id, $appointment->caregiver_id, $appointment->doctor_id]);
+    //     // เชื่อมโยงผู้ที่เกี่ยวข้องในการสนทนานี้ (ผู้สูงอายุ, ผู้ดูแล, แพทย์)
+    //     $conversation->users()->attach([$appointment->elderly_id, $appointment->caregiver_id, $appointment->doctor_id]);
 
-        return redirect()->route('chat.show', $conversation->id);
-    }
+    //     return redirect()->route('chat.show', $conversation->id);
+    // }
 
 
     // ส่งข้อความ

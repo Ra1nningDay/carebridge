@@ -45,4 +45,39 @@ class ZoomController extends Controller
 
         return redirect()->route('appointments.index')->with('success', 'เชื่อมต่อ Zoom สำเร็จ');
     }
+    
+    public function createMeetingAndSaveLink($appointmentId)
+    {
+        $zoomAccessToken = session('zoom_access_token');
+        
+        // สร้างห้องประชุมด้วย Zoom API
+        $client = new Client();
+        $response = $client->post('https://api.zoom.us/v2/users/me/meetings', [
+            'headers' => [
+                'Authorization' => "Bearer {$zoomAccessToken}",
+            ],
+            'json' => [
+                'topic' => 'Meeting for Elderly Care',
+                'type' => 2, // Scheduled meeting
+                'start_time' => '2025-01-10T10:00:00Z', // Set the time accordingly
+                'duration' => 30,
+                'timezone' => 'Asia/Bangkok',
+                'settings' => [
+                    'host_video' => true,
+                    'participant_video' => true,
+                    'waiting_room' => true,
+                ],
+            ],
+        ]);
+
+        $meeting = json_decode($response->getBody());
+
+        // บันทึกลิงก์ Zoom ที่สร้างขึ้นในฐานข้อมูล
+        $appointment = Appointment::find($appointmentId);
+        $appointment->zoom_link = $meeting->join_url;
+        $appointment->save();
+
+        return redirect()->route('appointments.show', $appointmentId);
+    }
+
 }

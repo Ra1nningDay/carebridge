@@ -51,43 +51,28 @@
                                 </span>
                             </div>
 
-                            {{-- ฟังก์ชันแชท --}}
+                            {{-- ฟังก์ชัน Zoom --}}
                             <div class="mb-3">
-                                @php
-                                    // ค้นหาการสนทนาระหว่างผู้ใช้และผู้ที่เกี่ยวข้อง
-                                    $conversation = \App\Models\Conversation::whereHas('users', function ($query) {
-                                        $query->where('users.id', auth()->id());
-                                    })->whereHas('users', function ($query) use ($appointment) {
-                                        // ถ้ามีการเชื่อมโยงกับผู้สูงอายุหรือผู้ดูแลหรือแพทย์
-                                        $query->where('users.id', $appointment->elderly_id)
-                                              ->orWhere('users.id', $appointment->caregiver_id)
-                                              ->orWhere('users.id', $appointment->doctor_id);
-                                    })->first();
-                                @endphp
-
                                 {{-- เช็คสถานะและเวลานัดหมาย --}}
                                 @if($appointment->status == 'confirmed' && $appointment->scheduled_at && \Carbon\Carbon::parse($appointment->scheduled_at)->isPast())
                                     @if(
                                         // ตรวจสอบว่าเป็นผู้สูงอายุ, ผู้ดูแล, หรือแพทย์ที่เกี่ยวข้อง
                                         ($appointment->elderly_id == auth()->id() || $appointment->caregiver_id == auth()->id() || $appointment->doctor_id == auth()->id())
                                     )
-                                        {{-- เช็คว่าเป็นการสนทนากลุ่มที่มีอยู่แล้วหรือไม่ ถ้าไม่มีให้สร้างใหม่ --}}
-                                        @if($conversation)
-                                            <a href="{{ route('chat.show', $conversation->id) }}" class="btn btn-primary">เข้าสู่การแชท</a>
+                                        {{-- ถ้ามี Zoom link แสดงลิงก์ --}}
+                                        @if($appointment->zoom_link)
+                                            <a href="{{ $appointment->zoom_link }}" class="btn btn-primary" target="_blank">เข้าสู่ห้องประชุม Zoom</a>
                                         @else
-                                            {{-- สร้างการสนทนาใหม่โดยรวมผู้ที่เกี่ยวข้องทั้งหมด --}}
-                                            <a href="{{ route('chat.start', ['appointmentId' => $appointment->id]) }}" class="btn btn-primary">เริ่มการสนทนากลุ่ม</a>
+                                            <p>ลิงก์ Zoom ยังไม่พร้อม</p>
                                         @endif
                                     @else
-                                        <p>คุณไม่มีสิทธิ์เริ่มการสนทนากับผู้ที่เกี่ยวข้องในตอนนี้</p>
+                                        <p>คุณไม่มีสิทธิ์เข้า Zoom ในการนัดหมายนี้</p>
                                     @endif
                                 @elseif($appointment->status == 'confirmed' && $appointment->scheduled_at && \Carbon\Carbon::parse($appointment->scheduled_at)->isFuture())
-                                    <p>กรุณารอถึงเวลานัดหมายก่อนถึงจะสามารถเริ่มแชทได้</p>
+                                    <p>กรุณารอถึงเวลานัดหมายก่อนที่จะสามารถเข้าห้อง Zoom ได้</p>
                                 @elseif($appointment->status != 'confirmed')
                                     <p>การนัดหมายยังไม่ยืนยัน</p>
                                 @endif
-
-
                             </div>
 
                             {{-- ฟังก์ชันตามบทบาท --}}
@@ -124,6 +109,8 @@
                                     <a href="{{ route('appointments.show', $appointment->id) }}" 
                                     class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
                                 @endif
+                            </div>
+
                             </div>
                         </div>
                     </div>

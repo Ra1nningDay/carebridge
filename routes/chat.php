@@ -3,7 +3,7 @@ use App\Http\Controllers\ChatController;
 
 Route::middleware(['auth'])->group(function () {
     // เริ่มต้นการสนทนากลุ่ม
-    Route::get('/chat/start/{appointmentId}', [ChatController::class, 'startGroupConversation'])->name('chat.start'); 
+    // Route::get('/chat/start/{appointmentId}', [ChatController::class, 'startGroupConversation'])->name('chat.start'); 
 
     // เริ่มต้นการสนทนากับผู้ใช้คนเดียว
     Route::get('/chat/start/{userId}', [ChatController::class, 'startConversation'])->name('chat.start'); // ถ้าคุณยังต้องการเริ่มการสนทนากับคนเดียว
