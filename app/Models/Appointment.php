@@ -16,6 +16,7 @@ class Appointment extends Model
         'scheduled_at',
         'status',
         'notes',
+        'zoom_link',
     ];
 
     /**

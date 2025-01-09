@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ZoomController;
 
 class AppointmentController extends Controller
 {
@@ -120,18 +121,31 @@ class AppointmentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $appointment = Appointment::findOrFail($id); // ค้นหาการนัดหมาย
-        
-        // ตรวจสอบสิทธิ์ (Optionally ใช้ Policy สำหรับการตรวจสอบเพิ่มเติม)
+        $appointment = Appointment::findOrFail($id);
+
+        // ตรวจสอบว่าเป็นผู้ดูแลของนัดหมาย
         if (!auth()->user()->roles->contains('name', 'caregiver') || $appointment->caregiver_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // อัปเดตสถานะของการนัดหมาย
+        // อัปเดตสถานะการนัดหมาย
         $appointment->update([
             'status' => $request->input('status'),
         ]);
 
+        // หากสถานะเป็น "confirmed" และยังไม่มี Zoom Link
+        if ($request->input('status') === 'confirmed' && !$appointment->zoom_link) {
+            try {
+                // เรียกใช้ ZoomController เพื่อสร้างห้องประชุม
+                $zoomController = new ZoomController();
+                $zoomController->createMeetingAndSaveLink($appointment->id);
+            } catch (\Exception $e) {
+                return redirect()->route('appointments.index')
+                    ->with('error', 'ไม่สามารถสร้างห้องประชุม Zoom ได้: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('appointments.index')->with('success', 'Appointment status updated successfully!');
     }
+
 }

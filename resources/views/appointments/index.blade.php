@@ -2,47 +2,40 @@
 
 @section('content')
 <div class="container py-5">
-    <h2 class="text-center text-primary mb-4">รายการนัดหมาย</h2>
-    
+    <h2 class="text-center text-primary fw-bold mb-4">รายการนัดหมาย</h2>
+
     @if($appointments->isEmpty())
-        <div class="alert alert-info text-center">ยังไม่มีการนัดหมาย</div>
+        <div class="alert alert-info text-center py-4 rounded-lg shadow-sm">
+            <strong>ยังไม่มีการนัดหมาย</strong>
+        </div>
     @else
         <div class="row justify-content-center">
             @foreach($appointments as $appointment)
                 <div class="col-md-4 mb-4">
-                    <div class="card shadow-lg border-0 rounded-lg bg-light">
+                    <div class="card shadow border-0 rounded-lg">
                         <div class="card-body p-4">
-                            {{-- ชื่อแพทย์และวันที่นัดหมาย --}}
+                            {{-- Header: Doctor Name and Date --}}
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title mb-0 text-truncate">
+                                <h5 class="card-title mb-0 text-primary fw-bold">
                                     แพทย์: {{ $appointment->doctor->name ?? 'ไม่พบข้อมูลแพทย์' }}
                                 </h5>
-                                <span class="text-muted">
-                                    {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('d M Y') ?? 'N/A' }}
+                                <span class="badge bg-secondary text-white rounded-pill">
+                                    {{ Carbon\Carbon::parse($appointment->scheduled_at)->format('d M Y') ?? 'N/A' }}
                                 </span>
                             </div>
 
-                            {{-- เวลาและผู้สูงอายุ --}}
-                            <p class="mb-1"><strong>เวลา:</strong> 
-                                {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('H:i') ?? 'N/A' }}
-                            </p>
-                            <p class="mb-1"><strong>ผู้สูงอายุ:</strong> 
-                                {{ $appointment->elderly->name ?? 'ไม่พบข้อมูลผู้สูงอายุ' }}
-                            </p>
+                            {{-- Appointment Details --}}
+                            <p class="mb-1"><strong>เวลา:</strong> {{ Carbon\Carbon::parse($appointment->scheduled_at)->format('H:i') ?? 'N/A' }}</p>
+                            <p class="mb-1"><strong>ผู้สูงอายุ:</strong> {{ $appointment->elderly->name ?? 'ไม่พบข้อมูลผู้สูงอายุ' }}</p>
+                            <p class="mb-3"><strong>ผู้ดูแล:</strong> {{ $appointment->caregiver->name ?? 'ไม่พบข้อมูลผู้ดูแล' }}</p>
 
-                            {{-- ข้อมูลผู้ดูแล --}}
-                            <p class="mb-3"><strong>ผู้ดูแล:</strong> 
-                                {{ $appointment->caregiver->name ?? 'ไม่พบข้อมูลผู้ดูแล' }}
-                            </p>
-
-                            {{-- สถานะ --}}
+                            {{-- Status Indicator --}}
                             <div class="mb-3">
-                                <span class="badge rounded-pill 
-                                    bg-{{
-                                        $appointment->status == 'confirmed' ? 'success' : 
-                                        ($appointment->status == 'pending' ? 'warning' : 
-                                        ($appointment->status == 'canceled' ? 'danger' : 'secondary'))
-                                    }} text-white">
+                                <span class="badge rounded-pill px-3 py-2 text-white {{
+                                    $appointment->status == 'confirmed' ? 'bg-success' : 
+                                    ($appointment->status == 'pending' ? 'bg-warning text-dark' : 
+                                    ($appointment->status == 'canceled' ? 'bg-danger' : 'bg-secondary'))
+                                }}">
                                     {{
                                         $appointment->status == 'confirmed' ? 'ยืนยันแล้ว' : 
                                         ($appointment->status == 'pending' ? 'กำลังรอการยืนยัน' : 
@@ -51,44 +44,46 @@
                                 </span>
                             </div>
 
-                            {{-- ฟังก์ชัน Zoom --}}
+                           {{-- Zoom Functionality --}}
                             <div class="mb-3">
-                                {{-- เช็คสถานะและเวลานัดหมาย --}}
-                                @if($appointment->status == 'confirmed' && $appointment->scheduled_at && \Carbon\Carbon::parse($appointment->scheduled_at)->isPast())
-                                    @if(
-                                        // ตรวจสอบว่าเป็นผู้สูงอายุ, ผู้ดูแล, หรือแพทย์ที่เกี่ยวข้อง
-                                        ($appointment->elderly_id == auth()->id() || $appointment->caregiver_id == auth()->id() || $appointment->doctor_id == auth()->id())
-                                    )
-                                        {{-- ถ้ามี Zoom link แสดงลิงก์ --}}
-                                        @if($appointment->zoom_link)
-                                            <a href="{{ $appointment->zoom_link }}" class="btn btn-primary" target="_blank">เข้าสู่ห้องประชุม Zoom</a>
+                                @if($appointment->status === 'confirmed')
+                                    @if(Carbon\Carbon::parse($appointment->scheduled_at)->isPast())
+                                        @if($appointment->elderly_id == auth()->id() || $appointment->caregiver_id == auth()->id() || $appointment->doctor_id == auth()->id())
+                                            {{-- หากมี Zoom Link --}}
+                                            @if($appointment->zoom_link)
+                                                <a href="{{ $appointment->zoom_link }}" class="btn btn-success w-100" target="_blank">เข้าสู่ห้องประชุม Zoom</a>
+                                            {{-- หากยังไม่มี Zoom Link --}}
+                                            @else
+                                                <form action="{{ route('appointments.createZoom', $appointment->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-primary w-100">สร้างห้องประชุม Zoom</button>
+                                                </form>
+                                            @endif
                                         @else
-                                            <p>ลิงก์ Zoom ยังไม่พร้อม</p>
+                                            <p class="text-muted">คุณไม่มีสิทธิ์เข้า Zoom ในการนัดหมายนี้</p>
                                         @endif
                                     @else
-                                        <p>คุณไม่มีสิทธิ์เข้า Zoom ในการนัดหมายนี้</p>
+                                        <p class="text-muted">กรุณารอถึงเวลานัดหมายก่อนเข้าสู่ห้อง Zoom</p>
                                     @endif
-                                @elseif($appointment->status == 'confirmed' && $appointment->scheduled_at && \Carbon\Carbon::parse($appointment->scheduled_at)->isFuture())
-                                    <p>กรุณารอถึงเวลานัดหมายก่อนที่จะสามารถเข้าห้อง Zoom ได้</p>
-                                @elseif($appointment->status != 'confirmed')
-                                    <p>การนัดหมายยังไม่ยืนยัน</p>
+                                @else
+                                    <p class="text-muted">การนัดหมายยังไม่ยืนยัน</p>
                                 @endif
                             </div>
 
-                            {{-- ฟังก์ชันตามบทบาท --}}
+
+
+                            {{-- Role-Specific Actions --}}
                             <div class="d-flex justify-content-between">
-                                {{-- สำหรับแพทย์ --}}
+                                {{-- Admin Actions --}}
                                 @if(auth()->user()->roles->contains('name', 'admin') && $appointment->doctor_id == auth()->id())
-                                    <a href="{{ route('appointments.show', $appointment->id) }}" 
-                                    class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
-                                    <a href="{{ route('appointments.create', ['elderly_id' => $appointment->elderly_id]) }}" 
-                                    class="btn btn-outline-success btn-sm">สร้างนัดหมายใหม่</a>
+                                    <a href="{{ route('appointments.show', $appointment->id) }}" class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
+                                    <a href="{{ route('appointments.create', ['elderly_id' => $appointment->elderly_id]) }}" class="btn btn-outline-success btn-sm">สร้างนัดหมายใหม่</a>
                                 @endif
 
-                                {{-- สำหรับผู้ดูแล --}}
+                                {{-- Caregiver Actions --}}
                                 @if(auth()->user()->roles->contains('name', 'caregiver') && $appointment->caregiver_id == auth()->id())
                                     <a href="{{ route('appointments.show', $appointment->id) }}" class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
-                                    @if($appointment->status == 'pending') 
+                                    @if($appointment->status == 'pending')
                                         <form action="{{ route('appointments.update', $appointment->id) }}" method="POST" class="d-inline-block">
                                             @csrf
                                             @method('PATCH')
@@ -104,13 +99,10 @@
                                     @endif
                                 @endif
 
-                                {{-- สำหรับผู้สูงอายุ --}}
+                                {{-- Elderly Actions --}}
                                 @if(auth()->user()->roles->contains('name', 'patient') && $appointment->elderly_id == auth()->id())
-                                    <a href="{{ route('appointments.show', $appointment->id) }}" 
-                                    class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
+                                    <a href="{{ route('appointments.show', $appointment->id) }}" class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
                                 @endif
-                            </div>
-
                             </div>
                         </div>
                     </div>
