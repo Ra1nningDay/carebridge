@@ -9,8 +9,12 @@ class Appointment extends Model
 {
     use HasFactory;
 
+    protected $dates = [
+        'scheduled_at',
+    ];
+
     protected $casts = [
-        'scheduled_at' => 'datetime',
+        'scheduled_at' => 'datetime',   
     ];
 
     protected $fillable = [
@@ -21,6 +25,7 @@ class Appointment extends Model
         'status',
         'notes',
         'zoom_link',
+        'expired_at',
     ];
 
     /**
@@ -45,5 +50,10 @@ class Appointment extends Model
     public function doctor()
     {
         return $this->belongsTo(User::class, 'doctor_id');
+    }
+
+    public function isExpired()
+    {
+        return $this->status === 'expired';
     }
 }

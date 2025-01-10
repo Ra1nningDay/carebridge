@@ -12,10 +12,16 @@ use App\Http\Controllers\ZoomController;
 class AppointmentController extends Controller
 {
     // แสดงรายการนัด
-    public function index()
+   public function index()
     {
         $user = Auth::user(); // ดึงข้อมูลผู้ใช้ที่ล็อกอิน
 
+        // อัปเดตสถานะนัดหมายที่หมดอายุ
+        Appointment::where('status', 'confirmed')
+            ->where('scheduled_at', '<', now()->subMinutes(40))
+            ->update(['status' => 'expired']);
+
+        // ดึงเฉพาะนัดหมายที่ยังไม่หมดอายุหรือไม่ถูกยกเลิก
         $appointments = Appointment::where(function ($query) use ($user) {
             if ($user->roles->contains('name', 'caregiver')) {
                 $query->where('caregiver_id', $user->id);
@@ -27,11 +33,13 @@ class AppointmentController extends Controller
                 $query->where('doctor_id', $user->id);
             }
         })
+        ->whereNotIn('status', ['expired', 'canceled']) // ซ่อนนัดหมายที่หมดอายุหรือถูกยกเลิก
         ->orderBy('scheduled_at', 'asc')
         ->get();
 
         return view('appointments.index', compact('appointments'));
     }
+
 
     public function create(Request $request)
     {
@@ -148,4 +156,14 @@ class AppointmentController extends Controller
         return redirect()->route('appointments.index')->with('success', 'Appointment status updated successfully!');
     }
 
+    // อัปเดตสถานะนัดหมายที่หมดอายุ
+    public function updateExpiredAppointments()
+    {
+        Appointment::where('status', 'confirmed')
+            ->where('scheduled_at', '<', Carbon::now()->subMinutes(40)) // เลย 40 นาที
+            ->update([
+                'status' => 'expired',
+                'expired_at' => Carbon::now()
+            ]);
+    }
 }

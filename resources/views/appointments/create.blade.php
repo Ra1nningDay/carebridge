@@ -182,7 +182,9 @@
             </div>
 
             <!-- Hidden Inputs -->
+            <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
             <input type="hidden" name="elderly_id" value="{{ $elderly->id }}">
+            <input type="hidden" name="caregiver_id" value="{{ $caregiver->id }}">
             
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">ยันยันการนัดหมาย</button>

@@ -125,6 +125,7 @@
                             <div class="d-flex justify-content-end">
                                 <!-- เพิ่มลิงก์สำหรับการนัดแพทย์ พร้อมแนบ ID ของผู้สูงอายุ -->
                                 <a href="{{ route('appointments.create', ['elderly_id' => $assessment->user->id]) }}" class="btn btn-warning">นัดหมายการตรวจ</a>
+                                {{-- <a href="{{ route('appointments.show', $appointment->id) }}" class="btn btn-success">รายละเอียดนัดหมาย</a> --}}
                             </div>
                         </div>
                     </div>

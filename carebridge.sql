@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 09, 2025 at 08:39 PM
+-- Generation Time: Jan 10, 2025 at 03:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,7 +67,7 @@ CREATE TABLE `appointments` (
   `caregiver_id` bigint(20) UNSIGNED NOT NULL,
   `doctor_id` bigint(20) UNSIGNED NOT NULL,
   `scheduled_at` datetime NOT NULL,
-  `status` enum('pending','confirmed','canceled','rescheduled') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','confirmed','canceled','rescheduled','expired') NOT NULL DEFAULT 'pending',
   `zoom_link` varchar(255) DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -79,7 +79,8 @@ CREATE TABLE `appointments` (
 --
 
 INSERT INTO `appointments` (`id`, `elderly_id`, `caregiver_id`, `doctor_id`, `scheduled_at`, `status`, `zoom_link`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 69, 70, 2, '2025-01-07 11:20:00', 'confirmed', NULL, NULL, '2025-01-07 04:20:50', '2025-01-09 04:04:57');
+(1, 69, 70, 2, '2025-01-07 11:20:00', 'expired', NULL, NULL, '2025-01-07 04:20:50', '2025-01-10 01:49:27'),
+(2, 69, 70, 2, '2025-01-10 09:05:00', 'pending', NULL, NULL, '2025-01-10 02:04:04', '2025-01-10 02:04:04');
 
 -- --------------------------------------------------------
 
@@ -1798,7 +1799,7 @@ ALTER TABLE `application_steps`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `assessments`
