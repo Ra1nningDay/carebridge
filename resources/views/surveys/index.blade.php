@@ -57,32 +57,21 @@
                 </div> --}}
             </div>
 
-            <h2 class="fw-bold text-primary mt-5 mb-4">การคัดกรองกลุ่ม Geriatric Syndromes</h2>
+            <h2 class="fw-bold text-primary mt-5 mb-4">ประเมินความเสี่ยงสุขภาพจากฝุ่น PM 2.5</h2>
             <div class="row g-4">
+                <!-- แบบประเมินความเสี่ยงฝุ่น PM 2.5 -->
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
-                            <i class="bi bi-clipboard2-pulse fs-1 text-warning"></i>
-                            <h5 class="card-title mt-3">แบบประเมินสุขภาพจิต</h5>
-                            <p class="text-muted">ตรวจสอบความเครียดและภาวะซึมเศร้า</p>
-                            <a href="" class="btn btn-warning mt-2">
+                            <i class="bi bi-cloud-drizzle fs-1 text-danger"></i>
+                            <h5 class="card-title mt-3">แบบประเมินความเสี่ยงจากฝุ่น PM 2.5</h5>
+                            <p class="text-muted">ตรวจสอบว่าคุณอยู่ในพื้นที่เสี่ยงหรือไม่ และดูแลสุขภาพของคุณได้อย่างไร</p>
+                            <a href="{{ route('pm25_assessments.create') }}" class="btn btn-danger mt-2">
                                 เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
-                {{-- <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <i class="bi bi-emoji-smile fs-1 text-success"></i>
-                            <h5 class="card-title mt-3">แบบประเมินความสุข</h5>
-                            <p class="text-muted">ตรวจวัดความพึงพอใจและความสุขในชีวิต</p>
-                            <a href="" class="btn btn-success mt-2">
-                                เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div> --}}
             </div>
 
             <h2 class="fw-bold text-secondary mt-5 mb-4">การประเมินความสามารถในการทำกิจวัตรประจำวัน (Activities of Daily Living)</h2>
@@ -93,7 +82,7 @@
                             <i class="bi bi-ear fs-1 text-secondary"></i>
                             <h5 class="card-title mt-3">แบบประเมินการได้ยิน</h5>
                             <p class="text-muted">ตรวจสอบการได้ยินและความเสี่ยงต่อการสูญเสียการได้ยิน</p>
-                            <a href="{{ route('hearing.survey.index') }}" class="btn btn-secondary mt-2">
+                            <a href="" class="btn btn-secondary mt-2">
                                 เริ่มประเมินทันที <i class="bi bi-arrow-right-circle ms-1"></i>
                             </a>
                         </div>

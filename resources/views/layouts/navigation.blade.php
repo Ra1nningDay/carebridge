@@ -63,18 +63,31 @@
                         </span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end notification-menu" aria-labelledby="notificationDropdown">
+                        @if (isset($upcomingAppointment))
+                            <li class="dropdown-item bg-light border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-calendar-event me-3 text-primary"></i>
+                                    <div>
+                                        <strong>นัดหมายถัดไป:</strong>
+                                        <p class="mb-0">
+                                            กับ <strong>{{ $upcomingAppointment->doctor->name ?? 'ไม่ระบุแพทย์' }}</strong><br>
+                                            วันที่ {{ \Carbon\Carbon::parse($upcomingAppointment->scheduled_at)->format('d M Y H:i') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                        @endif
+
+                        <!-- Conversations -->
                         @if (isset($conversations) && $conversations->isNotEmpty())
                             @foreach ($conversations->sortByDesc(fn($conversation) => $conversation->messages->last()?->created_at) as $conversation)
                                 <li>
                                     <a href="{{ route('chat.show', $conversation->id) }}" class="dropdown-item">
-                                        <!-- รูปโปรไฟล์คู่สนทนา -->
                                         <div class="me-3">
                                             <img src="{{ $conversation->users->firstWhere('id', '!=', Auth::id())->avatar_url ?? asset('images/default-avatar.png') }}" 
-                                                alt="{{ $conversation->users->firstWhere('id', '!=', Auth::id())->name ?? 'Unknown User' }}" 
+                                                alt="" 
                                                 class="chat-list-profile-image">
                                         </div>
-
-                                        <!-- ชื่อ, ข้อความล่าสุด, และเวลา -->
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong>{{ $conversation->users->firstWhere('id', '!=', Auth::id())->name ?? 'Unknown User' }}</strong>
@@ -95,7 +108,6 @@
                             </li>
                         @endif
                     </ul>
-
                 </div>
 
                 <!-- User Profile Dropdown -->

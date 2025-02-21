@@ -49,6 +49,8 @@ class PatientController extends Controller
             'caregiver_address' => ['required', 'string', 'max:255'],
         ]);
 
+        // dd($request->all());
+
         try {
             // สร้างผู้ใช้งานสำหรับ "ผู้สูงอายุ"
             $elder = User::create([
@@ -115,12 +117,12 @@ class PatientController extends Controller
                 $caregiver->roles()->attach($caregiverRole->id);
             }
 
-            $elder->caregivers()->attach($caregiver->id, ['created_at' => now(), 'updated_at' => now()]);
+            // $elder->caregivers()->attach($caregiver->id, ['created_at' => now(), 'updated_at' => now()]);
 
             return redirect()->back()->with('success', 'ลงทะเบียนผู้รับการตรวจสำเร็จ');
         } catch (\Exception $e) {
             \Log::error('Error creating user: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'เกิดข้อผิดพลาดในการลงทะเบียน');
+            return redirect()->back()->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
         }
     }
 

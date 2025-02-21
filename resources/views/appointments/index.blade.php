@@ -8,10 +8,10 @@
         <div class="alert alert-success mb-4">{{ session('success') }}</div>
     @endif
 
-    <!-- Error Message -->
+    {{-- <!-- Error Message -->
     @if(session('error'))
         <div class="alert alert-danger mb-4">{{ session('error') }}</div>
-    @endif
+    @endif --}}
 
     @if($appointments->isEmpty())
         <div class="alert alert-info text-center py-4 rounded-lg shadow-sm">
@@ -128,5 +128,47 @@
             @endforeach
         </div>
     @endif
+    
+   <!-- ประวัติการนัดหมาย -->
+    <h3 class="text-center text-secondary fw-bold mt-5">
+        <i class="bi bi-clock-history me-2"></i>ประวัติการนัดหมาย
+    </h3>
+    @if($expiredAppointments->isEmpty())
+        <div class="text-center py-5">
+            <i class="bi bi-journal-x text-secondary display-4"></i>
+            <p class="text-secondary fw-bold mt-3">ไม่มีประวัติการนัดหมาย</p>
+        </div>
+    @else
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-4">
+            @foreach($expiredAppointments as $appointment)
+                <div class="col">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary fw-bold">
+                                <i class="bi bi-person-badge-fill me-2"></i>แพทย์: {{ $appointment->doctor->name ?? 'ไม่พบข้อมูล' }}
+                            </h5>
+                            <p class="mb-1">
+                                <i class="bi bi-calendar-event me-2 text-primary"></i>
+                                <strong>เวลา:</strong> {{ Carbon\Carbon::parse($appointment->scheduled_at)->format('d M Y H:i') }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-people-fill me-2 text-primary"></i>
+                                <strong>ผู้สูงอายุ:</strong> {{ $appointment->elderly->name ?? 'ไม่พบข้อมูล' }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-person-fill me-2 text-primary"></i>
+                                <strong>ผู้ดูแล:</strong> {{ $appointment->caregiver->name ?? 'ไม่พบข้อมูล' }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-exclamation-circle-fill me-2 text-danger"></i>
+                                <strong>สถานะ:</strong> <span class="badge bg-danger">หมดอายุ</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
 </div>
 @endsection

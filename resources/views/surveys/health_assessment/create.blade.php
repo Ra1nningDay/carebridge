@@ -5,11 +5,12 @@
 <div class="container-fluid pb-5 mb-5" style="max-width: 960px;">
     <div class="assessment-header text-center my-5">
         <h1 class="fw-bold text-primary position-relative">
-            แบบประเมินการคัดกรองสุขภาพทั่วไป
+            แบบประเมินความเสี่ยงสุขภาพจากฝุ่น PM 2.5
             <span class="d-block position-absolute top-100 start-50 translate-middle w-50 border-primary border-bottom"></span>
         </h1>
-        <p class="text-muted fs-5">กรุณากรอกข้อมูลและตอบคำถามเพื่อประเมินเบื้องต้น</p>
+        <p class="text-muted fs-5">กรุณากรอกข้อมูลและตอบคำถามเพื่อประเมินความเสี่ยงสุขภาพจากฝุ่น PM 2.5</p>
     </div>
+
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -37,11 +38,18 @@
                         <input type="hidden" name="recorded_by" value="{{ Auth::id() }}">
 
                         <!-- Hypertension Section -->
-                        <div id="hypertensionSection" class="hidden-section visible-section d-flex flex-column flex-grow-1">
-                            @include('surveys.health_assessment.partials.hypertension')
+                        <div id="pm25RiskSection" class="visible-section d-flex flex-column flex-grow-1">
+                            <h4 class="fw-bold">1. คุณอยู่ในพื้นที่เสี่ยงแค่ไหน?</h4>
+                            <p>คุณเคยต้องอยู่ในที่ที่มีฝุ่นหนาแน่น เช่น บริเวณถนนที่รถติด อาคารก่อสร้าง หรือโรงงานไหม?</p>
+                            <div>
+                                <label><input type="radio" name="question1" value="ไม่เคย" required> ไม่เคย</label><br>
+                                <label><input type="radio" name="question1" value="บางครั้ง"> บางครั้ง</label><br>
+                                <label><input type="radio" name="question1" value="บ่อยครั้ง"> บ่อยครั้ง</label><br>
+                                <label><input type="radio" name="question1" value="เกือบทุกวัน"> เกือบทุกวัน</label>
+                            </div>
 
                             <div class="d-flex justify-content-end mt-auto">
-                                <button type="button" id="nextToDiabetes" class="btn btn-outline-primary d-flex align-items-center">
+                                <button type="button" id="nextToHealthIssues" class="btn btn-outline-primary d-flex align-items-center">
                                     <i class="bi bi-arrow-right-circle me-2"></i> ถัดไป
                                 </button>
                             </div>
@@ -62,25 +70,58 @@
                         </div>
 
                         <!-- สุขภาพช่องปาก Section -->
-                        <div id="oralHealthSection" class="hidden-section d-flex flex-column flex-grow-1">
-                            @include('surveys.health_assessment.partials.oral_health')
+                        <div id="healthIssuesSection" class="hidden-section d-flex flex-column flex-grow-1">
+                            <h4 class="fw-bold">2. คุณมีโรคประจำตัวหรือเปล่า?</h4>
+                            <p>คุณมีโรคเหล่านี้หรือไม่?</p>
+                            <div>
+                                <label><input type="checkbox" name="question2[]" value="ภูมิแพ้"> ภูมิแพ้</label><br>
+                                <label><input type="checkbox" name="question2[]" value="หอบหืด"> หอบหืด</label><br>
+                                <label><input type="checkbox" name="question2[]" value="ปอดอุดกั้นเรื้อรัง"> ปอดอุดกั้นเรื้อรัง</label><br>
+                                <label><input type="checkbox" name="question2[]" value="โรคหัวใจ"> โรคหัวใจ</label><br>
+                                <label><input type="checkbox" name="question2[]" value="ไม่มีโรคประจำตัว"> ไม่มีโรคประจำตัว</label>
+                            </div>
 
                             <div class="d-flex justify-content-between mt-auto">
-                                <button type="button" id="prevToDiabetes" class="btn btn-outline-secondary d-flex align-items-center">
+                                <button type="button" id="prevToPm25Risk" class="btn btn-outline-secondary d-flex align-items-center">
                                     <i class="bi bi-arrow-left-circle me-2"></i> กลับ
                                 </button>
-                                <button type="button" id="nextToEyeHealth" class="btn btn-outline-primary d-flex align-items-center">
+                                <button type="button" id="nextToSymptoms" class="btn btn-outline-primary d-flex align-items-center">
                                     <i class="bi bi-arrow-right-circle me-2"></i> ถัดไป
                                 </button>
                             </div>
                         </div>
 
                         <!-- สุขภาพตา Section -->
-                        <div id="eyeHealthSection" class="hidden-section d-flex flex-column flex-grow-1">
-                            @include('surveys.health_assessment.partials.eye_health')
+                       <div id="symptomsSection" class="hidden-section d-flex flex-column flex-grow-1">
+                            <h4 class="fw-bold">3. ร่างกายคุณส่งสัญญาณเตือนอะไรบ้าง?</h4>
+                            <p>คุณมีอาการเหล่านี้หรือไม่?</p>
+                            <div>
+                                <label><input type="checkbox" name="question3[]" value="หายใจติดขัด"> หายใจติดขัด แน่นหน้าอก</label><br>
+                                <label><input type="checkbox" name="question3[]" value="หอบ"> หอบ หายใจเสียงดังวี้ด</label><br>
+                                <label><input type="checkbox" name="question3[]" value="ไม่มีอาการ"> ไม่มีอาการ</label>
+                            </div>
 
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <button type="button" id="prevToOral" class="btn btn-outline-secondary d-flex align-items-center">
+                            <div class="d-flex justify-content-between mt-auto">
+                                <button type="button" id="prevToHealthIssues" class="btn btn-outline-secondary d-flex align-items-center">
+                                    <i class="bi bi-arrow-left-circle me-2"></i> กลับ
+                                </button>
+                                <button type="button" id="nextToSelfProtection" class="btn btn-outline-primary d-flex align-items-center">
+                                    <i class="bi bi-arrow-right-circle me-2"></i> ถัดไป
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="selfProtectionSection" class="hidden-section d-flex flex-column flex-grow-1">
+                            <h4 class="fw-bold">4. คุณป้องกันตัวเองดีแค่ไหน?</h4>
+                            <p>เวลาคุณออกจากบ้าน คุณสวมหน้ากากไหม?</p>
+                            <div>
+                                <label><input type="radio" name="question4" value="สวมทุกครั้ง" required> สวมทุกครั้ง</label><br>
+                                <label><input type="radio" name="question4" value="สวมบางครั้ง"> สวมบางครั้ง</label><br>
+                                <label><input type="radio" name="question4" value="ไม่สวมเลย"> ไม่สวมเลย</label>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-auto">
+                                <button type="button" id="prevToSymptoms" class="btn btn-outline-secondary d-flex align-items-center">
                                     <i class="bi bi-arrow-left-circle me-2"></i> กลับ
                                 </button>
                                 <button type="submit" class="btn btn-outline-success d-flex align-items-center">
@@ -480,6 +521,7 @@
 </style>
 
 <script>
+    // Show and hide the health tips popup
     document.getElementById('showHealthTipsBtn').addEventListener('click', function() {
         document.getElementById('healthTipsPopup').classList.add('show');
     });
@@ -488,146 +530,82 @@
         document.getElementById('healthTipsPopup').classList.remove('show');
     });
 
-    // เมื่อมีการเลือกผู้สูงอายุ
+    // Update elder information when selected
     document.getElementById('user_id').addEventListener('change', function () {
-        var selectedOption = this.options[this.selectedIndex];
-        var elderName = selectedOption.getAttribute('data-name');
-        var elderAge = selectedOption.getAttribute('data-age');
-        var elderGender = selectedOption.getAttribute('data-gender');
-        var elderImage = selectedOption.getAttribute('data-image');
-        var lastAssessment = selectedOption.getAttribute('data-last-assessment');
-
-        // แสดงข้อมูลผู้สูงอายุ
-        document.getElementById('elderName').textContent = elderName;
-        document.getElementById('elderAge').textContent = elderAge;
-        document.getElementById('elderGender').textContent = elderGender;
-        document.getElementById('lastAssessmentDate').textContent = lastAssessment;
-
-        // แสดงรูปโปรไฟล์
-        document.getElementById('profileImage').src = elderImage;
+        const selectedOption = this.options[this.selectedIndex];
+        document.getElementById('elderName').textContent = selectedOption.getAttribute('data-name');
+        document.getElementById('elderAge').textContent = selectedOption.getAttribute('data-age');
+        document.getElementById('elderGender').textContent = selectedOption.getAttribute('data-gender');
+        document.getElementById('lastAssessmentDate').textContent = selectedOption.getAttribute('data-last-assessment');
+        document.getElementById('profileImage').src = selectedOption.getAttribute('data-image');
         document.getElementById('elderProfileImage').style.display = 'block';
         document.getElementById('elderDetails').style.display = 'block';
     });
 
+    // Functions to show and hide sections with transitions
     function showNextSection(currentSection, nextSection, progressValue) {
         currentSection.classList.remove('visible-section');
         currentSection.classList.add('hidden-section');
-            
-        setTimeout(function() {
+        setTimeout(() => {
             nextSection.classList.remove('hidden-section');
             nextSection.classList.add('visible-section');
-
-            // อัพเดต Progress Bar
-            let progressBar = document.getElementById('progressBar');
-            progressBar.style.transition = 'width 0.5s ease'; // ทำให้การเคลื่อนไหวของ ProgressBar นุ่มขึ้น
-            progressBar.style.width = progressValue + '%';
-            progressBar.setAttribute('aria-valuenow', progressValue);
+            updateProgress(progressValue);
         }, 500);
     }
 
     function showPrevSection(currentSection, prevSection, progressValue) {
         currentSection.classList.remove('visible-section');
         currentSection.classList.add('hidden-section');
-            
-        setTimeout(function() {
+        setTimeout(() => {
             prevSection.classList.remove('hidden-section');
             prevSection.classList.add('visible-section');
-
-            let progressBar = document.getElementById('progressBar');
-            progressBar.style.transition = 'width 0.5s ease';
-            progressBar.style.width = progressValue + '%';
-            progressBar.setAttribute('aria-valuenow', progressValue);
+            updateProgress(progressValue);
         }, 500);
     }
 
-    // เมื่อคลิก "ถัดไป" ในแต่ละส่วน
-    document.getElementById('nextToDiabetes').addEventListener('click', function() {
-        var hypertensionSection = document.getElementById('hypertensionSection');
-        var diabetesSection = document.getElementById('diabetesSection');
-        showNextSection(hypertensionSection, diabetesSection, 50);  // 50% Progress
-    });
-
-    document.getElementById('nextToOralHealth').addEventListener('click', function() {
-        var diabetesSection = document.getElementById('diabetesSection');
-        var oralHealthSection = document.getElementById('oralHealthSection');
-        showNextSection(diabetesSection, oralHealthSection, 75);  // 75% Progress
-    });
-
-    document.getElementById('nextToEyeHealth').addEventListener('click', function() {
-        var oralHealthSection = document.getElementById('oralHealthSection');
-        var eyeHealthSection = document.getElementById('eyeHealthSection');
-        showNextSection(oralHealthSection, eyeHealthSection, 100);  // 100% Progress
-    });
-
-    // เมื่อคลิก "กลับ" ในแต่ละส่วน
-    document.getElementById('prevToHypertension').addEventListener('click', function() {
-        var diabetesSection = document.getElementById('diabetesSection');
-        var hypertensionSection = document.getElementById('hypertensionSection');
-        showPrevSection(diabetesSection, hypertensionSection, 25);  // 25% Progress
-    });
-
-    document.getElementById('prevToDiabetes').addEventListener('click', function() {
-        var oralHealthSection = document.getElementById('oralHealthSection');
-        var diabetesSection = document.getElementById('diabetesSection');
-        showPrevSection(oralHealthSection, diabetesSection, 50);  // 50% Progress
-    });
-
-    // ฟังก์ชั่นการแสดงการกลับไปยังส่วน Oral Health
-    document.getElementById('prevToOral').addEventListener('click', function() {
-        var eyeHealthSection = document.getElementById('eyeHealthSection');
-        var oralHealthSection = document.getElementById('oralHealthSection');
-        
-        // ซ่อน Eye Health section
-        eyeHealthSection.classList.remove('visible-section');
-        eyeHealthSection.classList.add('hidden-section');
-        
-        // แสดง Oral Health section
-        oralHealthSection.classList.remove('hidden-section');
-        oralHealthSection.classList.add('visible-section');
-
-        // อัพเดต progress bar ให้แสดงที่ 75%
-        let progressBar = document.getElementById('progressBar');
-        progressBar.style.width = '75%';
-        progressBar.setAttribute('aria-valuenow', 75);
-        updateProgress(75);  // ฟังก์ชั่นช่วยอัพเดต Progress Bar เมื่อทำการเปลี่ยนหน้า
-    });
-
-    // ฟังก์ชันสำหรับแสดงการไปยังส่วนถัดไป
-    function showNextSection(currentSection, nextSection, progressValue) {
-        currentSection.classList.remove('visible-section');
-        currentSection.classList.add('hidden-section');
-        
-        nextSection.classList.remove('hidden-section');
-        nextSection.classList.add('visible-section');
-
-        // อัพเดต progress bar
-        let progressBar = document.getElementById('progressBar');
-        progressBar.style.width = progressValue + '%';
-        progressBar.setAttribute('aria-valuenow', progressValue);
-        updateProgress(progressValue);
-    }
-
-    // ฟังก์ชันสำหรับแสดงการกลับไปยังส่วนก่อนหน้า
-    function showPrevSection(currentSection, prevSection, progressValue) {
-        currentSection.classList.remove('visible-section');
-        currentSection.classList.add('hidden-section');
-        
-        prevSection.classList.remove('hidden-section');
-        prevSection.classList.add('visible-section');
-
-        // อัพเดต progress bar
-        let progressBar = document.getElementById('progressBar');
-        progressBar.style.width = progressValue + '%';
-        progressBar.setAttribute('aria-valuenow', progressValue);
-        updateProgress(progressValue);
-    }
-
-    // ฟังก์ชันอัพเดต progress bar
+    // Update the progress bar
     function updateProgress(progressValue) {
-        let progressBar = document.getElementById('progressBar');
-        progressBar.style.width = progressValue + '%';
+        const progressBar = document.getElementById('progressBar');
+        progressBar.style.transition = 'width 0.5s ease';
+        progressBar.style.width = `${progressValue}%`;
         progressBar.setAttribute('aria-valuenow', progressValue);
     }
 
+    // Section navigation for PM2.5 assessment
+    document.getElementById('nextToHealthIssues').addEventListener('click', function() {
+        const pm25RiskSection = document.getElementById('pm25RiskSection');
+        const healthIssuesSection = document.getElementById('healthIssuesSection');
+        showNextSection(pm25RiskSection, healthIssuesSection, 50); // 50% Progress
+    });
+
+    document.getElementById('nextToSymptoms').addEventListener('click', function() {
+        const healthIssuesSection = document.getElementById('healthIssuesSection');
+        const symptomsSection = document.getElementById('symptomsSection');
+        showNextSection(healthIssuesSection, symptomsSection, 75); // 75% Progress
+    });
+
+    document.getElementById('nextToSelfProtection').addEventListener('click', function() {
+        const symptomsSection = document.getElementById('symptomsSection');
+        const selfProtectionSection = document.getElementById('selfProtectionSection');
+        showNextSection(symptomsSection, selfProtectionSection, 100); // 100% Progress
+    });
+
+    document.getElementById('prevToPm25Risk').addEventListener('click', function() {
+        const healthIssuesSection = document.getElementById('healthIssuesSection');
+        const pm25RiskSection = document.getElementById('pm25RiskSection');
+        showPrevSection(healthIssuesSection, pm25RiskSection, 25); // 25% Progress
+    });
+
+    document.getElementById('prevToHealthIssues').addEventListener('click', function() {
+        const symptomsSection = document.getElementById('symptomsSection');
+        const healthIssuesSection = document.getElementById('healthIssuesSection');
+        showPrevSection(symptomsSection, healthIssuesSection, 50); // 50% Progress
+    });
+
+    document.getElementById('prevToSymptoms').addEventListener('click', function() {
+        const selfProtectionSection = document.getElementById('selfProtectionSection');
+        const symptomsSection = document.getElementById('symptomsSection');
+        showPrevSection(selfProtectionSection, symptomsSection, 75); // 75% Progress
+    });
 </script>
 @endsection

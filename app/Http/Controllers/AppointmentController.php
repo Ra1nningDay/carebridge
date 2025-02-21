@@ -37,7 +37,24 @@ class AppointmentController extends Controller
         ->orderBy('scheduled_at', 'asc')
         ->get();
 
-        return view('appointments.index', compact('appointments'));
+        $expiredAppointments = Appointment::where(function ($query) use ($user) {
+            if ($user->roles->contains('name', 'caregiver')) {
+                $query->where('caregiver_id', $user->id);
+            }
+            if ($user->roles->contains('name', 'patient')) {
+                $query->where('elderly_id', $user->id);
+            }
+            if ($user->roles->contains('name', 'admin')) {
+                $query->where('doctor_id', $user->id);
+            }
+        })
+        ->where('status', 'expired') // ซ่อนนัดหมายที่หมดอายุหรือถูกยกเลิก
+        ->orderBy('scheduled_at', 'desc')
+        ->get();
+
+
+
+        return view('appointments.index', compact('appointments', 'expiredAppointments'));
     }
 
 
